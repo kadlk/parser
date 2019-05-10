@@ -1,0 +1,47 @@
+$(document).ready(function () {
+    window.fileUploaderCount = window.fileUploaderCount || 0;
+
+    var $fileUploaders = $('.file-uploader'),
+        options = window.fileUploaderOptions;
+
+    $fileUploaders.each(function (index, uploader) {
+        if (uploader.id) {
+            return;
+        }
+
+        uploader.id = 'fileUploader_' + window.fileUploaderCount;
+        !ko.dataFor(uploader) && bindContainerToModel(uploader, window.fileUploaderCount++);
+    });
+
+    function bindContainerToModel(container, index) {
+        var dispatcher = new EventDispatcher(),
+            imagesListModel = new ForumImageUploader([], options, dispatcher),
+            textArea = $(container).closest('.fpm-area-img').siblings('.fpm-area-text').find('textarea')[0];
+
+        if (!textArea) {
+            textArea = $('.markItUpContainer textarea')[0];
+        }
+
+        textArea.id = textArea.id || 'textArea_' + index;
+
+        imagesListModel.callbacks.onImageProcessed = function (item) {
+            sendImageUrlToTextArea.call(this, textArea.id, item);
+        };
+
+        imagesListModel.callbacks.onImageClick = function (item) {
+            sendImageUrlToTextArea.call(this, textArea.id, item);
+        };
+
+        container && ko.applyBindings(imagesListModel, container);
+    }
+
+    function sendImageUrlToTextArea(textareaId, item) {
+        var filename = this.getFileName(item),
+            imageUrl = item.images()['800x800'];
+
+        $.markItUp({
+            target: '.markItUpContainer #' + textareaId,
+            replaceWith: "[img=" + filename + "]" + imageUrl + "[/img]\n"
+        });
+    }
+});

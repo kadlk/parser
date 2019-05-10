@@ -1,0 +1,318 @@
+function ImageUploader(options, dispatcher) {
+    var self = this;
+
+    this.options = options || {};
+    this.dispatcher = dispatcher;
+    this.items = ko.observableArray();
+    this.isDropActive = ko.observable(false);
+    this.imageUploaderAPI = new ImageUploadAPI({
+        uploadData: options.uploadData
+    }, dispatcher);
+
+    this.headingIndex = ko.computed(function () {
+        var headingIndex = null,
+            items = self.items(),
+            item,
+            index;
+
+        for (index = 0; index < items.length; index++) {
+            item = items[index];
+
+            if (item.status() === 'processed') {
+                headingIndex = index;
+                break;
+            }
+        }
+
+        return headingIndex;
+    });
+
+    dispatcher && dispatcher.subscribe('credentials:fail', function (jqXHR) {
+        var repeat = (jqXHR.status === 400) ? false : true;
+
+        self.failItems(repeat);
+    });
+
+    this.items.subscribe(function () {
+        dispatcher && dispatcher.trigger('image:update');
+    });
+}
+
+ImageUploader.prototype.dragOver = function () {
+    this.isDropActive(true);
+};
+
+ImageUploader.prototype.dragLeave = function () {
+    this.isDropActive(false);
+};
+
+ImageUploader.prototype.uploadByInput = function (input) {
+    this.sendFiles(input.files);
+    input.value = '';
+};
+
+ImageUploader.prototype.uploadByDrop = function (event) {
+    this.isDropActive(false);
+    this.sendFiles(event.dataTransfer.files);
+};
+
+ImageUploader.prototype.addItem = function (data) {
+    var dispatcher = this.dispatcher,
+        item;
+
+    data = data || {};
+
+    item = {
+        id: '',
+        hash: '',
+        images: ko.observable(''),
+        preview: ko.observable(''),
+        progress: ko.observable(0),
+        status: ko.observable(''),
+        repeat: ko.observable(false)
+    };
+
+    item.loading = ko.computed(function () {
+        var status = item.status();
+        return status !== 'processed' && status !== 'error';
+    });
+
+    this.updateItem(item, data);
+    this.items.push(item);
+
+    item.status.subscribe(function (status) {
+        if (status === 'processed') {
+            dispatcher && dispatcher.trigger('image:update');
+        }
+    });
+
+    item.images.subscribe(function () {
+        dispatcher && dispatcher.trigger('image:update');
+    });
+
+    return item;
+};
+
+ImageUploader.prototype.updateItem = function (item, data) {
+    var self = this,
+        preview;
+
+    preview = (function () {
+        var images = data.images,
+            size = self.options.preview;
+
+        return (images && size) ? images[size] : '';
+    }());
+
+    ko.utils.objectForEach(data || {}, function (key, value) {
+        var property = item[key];
+
+        (typeof property === 'function') ? property(value) : item[key] = value;
+    });
+
+    preview && item.preview(preview);
+};
+
+ImageUploader.prototype.removeItem = function (item) {
+    this.items.remove(item);
+};
+
+ImageUploader.prototype.failItems = function (repeat) {
+    var self = this,
+        items = this.items() || [];
+
+    ko.utils.arrayForEach(items, function (item) {
+        if (item.status()) {
+            return;
+        }
+
+        self.updateItem(item, {
+            status: 'error',
+            repeat: !!repeat
+        });
+    });
+};
+
+ImageUploader.prototype.isUniqueItem = function (item) {
+    if (!item.hash) {
+        return true;
+    }
+
+    return !_.some(this.items(), function (searchItem) {
+        return (searchItem.id !== item.id) && (searchItem.hash === item.hash);
+    });
+};
+
+ImageUploader.prototype.sendFiles = function (files) {
+    var self = this;
+
+    files = Array.prototype.slice.call(files);
+
+    ko.utils.arrayForEach(files, function (file) {
+        self.sendSingleFile(file);
+    });
+};
+
+ImageUploader.prototype.sendSingleFile = function (file) {
+    var self = this,
+        item = this.addItem({
+            file: file
+        });
+
+    this.readFileContent(file, function (reader) {
+        var preview = reader.result;
+
+        if ((/^data:image\//i).test(preview)) {
+            item.preview(preview);
+        } else {
+            item.preview(null);
+        }
+
+        self.uploadItem(item);
+    });
+};
+
+ImageUploader.prototype.sendSingleFileRepeatedly = function (item) {
+    this.updateItem(item, {
+        progress: 0,
+        status: ''
+    });
+
+    this.uploadItem(item);
+};
+
+ImageUploader.prototype.uploadItem = function (item) {
+    var self = this,
+        file = item.file,
+        callbacks = {};
+
+    if (!file) {
+        return;
+    }
+
+    callbacks.progress = function (event) {
+        if (event.lengthComputable) {
+            item.progress(parseInt((event.loaded * 90) / event.total));
+        }
+    };
+
+    callbacks.success = function (data) {
+        self.updateItem(item, data);
+
+        if (self.isUniqueItem(item)) {
+            self.runStatusProcessing(item);
+        } else {
+            self.removeItem(item);
+        }
+    };
+
+    callbacks.error = function (jqXHR) {
+        var repeat = false;
+
+        if (jqXHR.status >= 500 && jqXHR.status <= 511) {
+            repeat = true;
+        }
+
+        self.updateItem(item, {
+            status: 'error',
+            repeat: repeat
+        });
+    };
+
+    this.imageUploaderAPI.upload(file, callbacks);
+};
+
+ImageUploader.prototype.readFileContent = function (file, callback) {
+    var reader = new FileReader();
+
+    reader.onloadend = function () {
+        callback && callback(reader);
+    };
+
+    reader.readAsDataURL(file);
+};
+
+ImageUploader.prototype.runStatusProcessing = function (item) {
+    var self = this,
+        request;
+
+    clearTimeout(item.timer);
+
+    item.timer = setTimeout(function () {
+        request = self.imageUploaderAPI.getStatus(item.id);
+
+        request.done(function (data) {
+            switch (data.status) {
+                case 'processed':
+                    self.updateItem(item, data);
+                    break;
+                case 'error':
+                    self.updateItem(item, data);
+                    self.updateItem(item, {
+                        status: 'error',
+                        repeat: true
+                    });
+                    break;
+                default:
+                    self.runStatusProcessing(item);
+            }
+        });
+
+        request.fail(function (jqXHR) {
+            var repeat = false;
+
+            if (jqXHR.status >= 500 && jqXHR.status <= 511) {
+                repeat = true;
+            }
+
+            self.updateItem(item, {
+                status: 'error',
+                repeat: repeat
+            });
+        });
+    }, 1000);
+};
+
+ImageUploader.prototype.getItems = function () {
+    var imagesArray = [];
+
+    ko.utils.arrayForEach(this.items(), function (item) {
+        if (item.status() === 'processed') {
+            imagesArray.push(item.images());
+        }
+    });
+
+    return imagesArray;
+};
+
+ImageUploader.prototype.setItems = function (list) {
+    var self = this,
+        list = list || {};
+
+    this.items([]);
+
+    ko.utils.arrayForEach(list, function (images) {
+        var size = self.options.preview,
+            hash = (images[size] || '').split('/').pop().split('.').shift();
+
+        self.addItem({
+            images: images,
+            status: 'processed',
+            hash: hash
+        });
+    });
+};
+
+ImageUploader.prototype.processingItemsCount = function () {
+    var count = 0;
+
+    ko.utils.arrayForEach(this.items(), function (item) {
+        var status = item.status();
+
+        if (status !== 'processed' && status !== 'error') {
+            count++;
+        }
+    });
+
+    return count;
+};

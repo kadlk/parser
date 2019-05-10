@@ -1,0 +1,76 @@
+function ForumImageUploader(initialImageList, options, dispatcher) {
+    var options = options || {};
+
+    this.miniatureKey = '80x80';
+    this.mainSize = '800x800';
+    this.callbacks = {};
+    this.dispatcher = dispatcher;
+
+    this.mainItemIndex = ko.observable(null);
+
+    ImageUploader.call(this, {
+        preview: this.miniatureKey,
+        uploadData: {
+            'meta[type]': options.metaType
+        }
+    }, this.dispatcher);
+
+    this.setItems(initialImageList);
+}
+
+ForumImageUploader.prototype = Object.create(ImageUploader.prototype);
+
+ForumImageUploader.prototype.setMain = function (mainIndex) {
+    this.mainItemIndex(mainIndex);
+};
+
+ForumImageUploader.prototype.uploadItem = function (item) {
+    var self = this;
+    var uploadFinished;
+    var succesfullyProcessed;
+
+    this.dispatcher.subscribe('credentials:error', function () {
+        item.status('error');
+
+        self.dispatcher.unsubscribe('credentials:error');
+    });
+
+    uploadFinished = item.images.subscribe(function (images) {
+        if (images[self.mainSize]) {
+            self.callbacks.onImageProcessed && self.callbacks.onImageProcessed.call(self, item);
+            uploadFinished.dispose();
+        }
+    });
+
+    succesfullyProcessed = item.status.subscribe(function (status) {
+        if (status !== 'processed') {
+            return;
+        }
+
+        var itemIndex = _.indexOf(self.items(), item);
+        (self.mainItemIndex() === null || itemIndex < self.mainItemIndex()) && self.mainItemIndex(itemIndex);
+        succesfullyProcessed.dispose();
+    });
+
+    ImageUploader.prototype.uploadItem.call(this, item);
+};
+
+ForumImageUploader.prototype.getMainFileName = function () {
+    if (!this.items().length) {
+        return '';
+    }
+
+    var mainItem = this.items()[this.mainItemIndex()];
+
+    return this.getFileName(mainItem);
+};
+
+ForumImageUploader.prototype.getFileName = function (item) {
+    var previewPath = item && item.images()[this.miniatureKey] ? item.images()[this.miniatureKey] : '';
+
+    return previewPath.slice(previewPath.lastIndexOf('/') + 1);
+};
+
+ForumImageUploader.prototype.resetMainItem = function () {
+    this.mainItemIndex(null);
+};

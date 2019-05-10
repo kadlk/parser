@@ -1,0 +1,270 @@
+/* -------------------------------------------------- *
+ * Project scripts
+ * -------------------------------------------------- *
+ * Author: Morozov Igor
+ * URL: http://www.morozoff.info/
+ * Copyright: 2010 Morozov Igor
+** -------------------------------------------------- */
+
+var PaginationSlider = {
+    totalPages: 0,
+    itemsPerPage: 0,
+    currentPage: 0,
+    url: '',
+    sliderTemplate: '',
+
+    init: function(totalPages, itemsPerPage, currentPage, url) {
+        this.totalPages = totalPages;
+        this.itemsPerPage = itemsPerPage;
+        this.currentPage = currentPage;
+        this.url = url;
+
+        $(document).ready(function() {
+            PaginationSlider.afterPageLoad();
+        });
+    },
+
+    afterPageLoad: function() {
+        if (this.totalPages < 15) {
+            return;
+        }
+
+        this.makeSlider();
+        $('a.exppages-ttl').click(jQuery.proxy(this, 'sliderActivation'));
+        $(document).bind('click', this.sliderHide);
+    },
+
+    sliderActivation: function(e) {
+        e.preventDefault();
+        var el = $(e.target).parents('div.b-pages');
+        el.addClass('active-droppages');
+        $(this.sliderTemplate).appendTo(el)
+        .imSlider({
+            sliderScrollArea: '.b-pageslider-i',
+            sliderScrollItems: 'a',
+            sliderShadL: '.pageslider-shd-l',
+            sliderShadR: '.pageslider-shd-r',
+            sliderDrag: '.pages-slider-track'
+        });
+
+        return false;
+    },
+
+    sliderHide: function(e) {
+        var el = $(e.target);
+        if((!el.hasClass('b-pageslider')) && (!el.parents('.b-pageslider').hasClass('active-pageslider'))) {
+            $('.b-pageslider').empty();
+            $('.b-pageslider').remove();
+            $('.b-pages').removeClass('active-droppages');
+        }
+    },
+
+    makeSlider: function() {
+        var li = '';
+        for (var i=1; i<=this.totalPages; i++) {
+            li += '<li><a href="'+ this.url + ((i-1) * this.itemsPerPage) +'"'
+                + (this.currentPage == i ? ' class="slider-drop slider-hr"' : '')
+                + '>' + (this.totalPages > 10 && !(i % 10) ? '<strong>'+ i +'</strong>' : i) + '</a></li>';
+        }
+
+        this.sliderTemplate = '<div class="b-pageslider active-pageslider"><div class="b-pageslider-i">'
+            + '<ul class="pagesslider__ul">'+ li +'</ul></div>'
+            + '<div class="pages-slider-track"><i class="pages-slider-drag"></i></div>'
+            + '<i class="pageslider-shd-l"></i><i class="pageslider-shd-r"></i></div>';
+    }
+};
+
+function AjaxPaginationSlider(paginationOptions, ajaxOptions) {
+    this.paginationOptions = paginationOptions;
+    this.ajaxOptions = ajaxOptions;
+
+    var pThis = this;
+    $(document).ready(function() {
+        pThis.afterPageLoad();
+    });
+};
+
+AjaxPaginationSlider.prototype = {
+    paginationOptions: {
+        totalPages: 0,
+        itemsPerPage: 0,
+        currentPage: 0,
+        contextClass: 'b-pages-context'
+    },
+    ajaxOptions: {
+        url: '',
+        data: {},
+        content: {}
+    },
+    sliderTemplate: '',
+    context: null,
+
+    afterPageLoad: function() {
+        this.context = $('div.' + this.paginationOptions.contextClass);
+
+        $('.page-next, .page-prev', this.context).remove();
+        $('li:not(.exppages) a', this.context).click(
+            jQuery.proxy(this, 'ajaxLoad')
+        );
+
+        if (this.paginationOptions.totalPages < 15) {
+            return;
+        }
+        $('a.exppages-ttl').click(jQuery.proxy(this, 'sliderActivation'));
+        $(document).bind('click', this.sliderHide);
+    },
+
+    sliderActivation: function(e) {
+        e.preventDefault();
+        this.makeSlider();
+        var el = $(e.target).parents('div.' + this.paginationOptions.contextClass);
+        el.addClass('active-droppages');
+        $(this.sliderTemplate).appendTo(el)
+        .imSlider({
+            sliderScrollArea: '.b-pageslider-i',
+            sliderScrollItems: 'a',
+            sliderShadL: '.pageslider-shd-l',
+            sliderShadR: '.pageslider-shd-r',
+            sliderDrag: '.pages-slider-track'
+        });
+
+        $('li:not(.exppages) a', 'div.b-pageslider-' + this.paginationOptions.contextClass).click(
+            jQuery.proxy(this, 'ajaxLoad')
+        );
+
+        return false;
+    },
+
+    sliderHide: function(e) {
+        var el = $(e.target);
+        if((!el.hasClass('b-pageslider')) && (!el.parents('.b-pageslider').hasClass('active-pageslider'))) {
+            $('.b-pageslider').remove();
+            $('.b-pages').removeClass('active-droppages');
+        }
+    },
+
+    makeSlider: function() {
+        var li = '';
+        for (var i=1; i<=this.paginationOptions.totalPages; i++) {
+            li += '<li><a href="#?start='+ ((i-1) * this.paginationOptions.itemsPerPage) +'"'
+                + (this.paginationOptions.currentPage == i ? ' class="slider-drop slider-hr"' : '')
+                + '>' + (this.paginationOptions.totalPages > 10 && !(i % 10) ? '<strong>'+ i +'</strong>' : i) + '</a></li>';
+        }
+
+        this.sliderTemplate = '<div class="b-pageslider b-pageslider-' + this.paginationOptions.contextClass + ' active-pageslider"><div class="b-pageslider-i">'
+            + '<ul class="pagesslider__ul">'+ li +'</ul></div>'
+            + '<div class="pages-slider-track"><i class="pages-slider-drag"></i></div>'
+            + '<i class="pageslider-shd-l"></i><i class="pageslider-shd-r"></i></div>';
+    },
+
+    updatePaginator: function(e) {
+        var newPage = $(e.target).parent();
+        var newPageLink = newPage.children();
+        var currentPageLink = $('a.hr', this.context);
+
+        newPageLink.addClass('hr');
+        currentPageLink.removeClass('hr');
+
+        this.paginationOptions.currentPage = parseInt(newPageLink.text());
+        $('.exppages-ttl', this.context).html(this.paginationOptions.currentPage + '<i class="ar"></i>');
+
+        $(document).click(); // See this.sliderHide
+    },
+
+    ajaxLoad: function(e) {
+        var pThis = this;
+        pThis.ajaxOptions.data.offset = $.getSplitValue($(e.target).closest('a').attr('href'), '=');
+
+        $.ajax({
+            url: pThis.ajaxOptions.url,
+            data: pThis.ajaxOptions.data,
+            dataType: 'json',
+            type: 'POST',
+            success: function(r) {
+                if (r != null && r.data.length > 0) {
+                    var newContent = $(r.data);
+                    pThis.ajaxOptions.content.replaceWith(newContent);
+                    pThis.ajaxOptions.content = newContent;
+
+                    pThis.updatePaginator(e);
+                };
+            }
+        });
+
+        e.preventDefault();
+        return false;
+    }
+};
+
+/*
+$(document).ready(function() {
+    if($('.b-pageslider').length) {
+        $('.exppages-ttl').click(function(){
+            $(this).parents('ul.pages-fastnav').next().addClass('active-pageslider');
+
+            $(document).bind('click', hidepageslider)
+            return false;
+        })
+        $('.b-pageslider').imSlider({
+            sliderScrollArea: '.b-pageslider-i',
+            sliderScrollItems: 'a',
+            sliderShadL: '.pageslider-shd-l',
+            sliderShadR: '.pageslider-shd-r',
+            sliderDrag: '.pages-slider-track'
+        });
+    };
+    if($('.mt-thanks-other').length) {
+        postthanks();
+    };
+
+});
+
+function hidepageslider(e) {
+    if((!$(e.target).hasClass('b-pageslider')) && (!$(e.target).parents('.b-pageslider').hasClass('active-pageslider'))) {
+        $('.b-pageslider').removeClass('active-pageslider');
+        $('.b-pageslider').imSlider('refreshImslider');
+    }
+}
+*/
+
+$(document).ready(function() {
+    postthanks();
+});
+
+function hidethanks() {
+    $('.b-mt-author').removeClass('mt-thanks-other-active');
+}
+
+function postthanks() {
+    var timethanks, $itemthanks;
+    $('.mt-thanks-other .ttl').click(function(){
+        clearTimeout(timethanks);
+        if($(this).parent().hasClass('mt-thanks-other-active')) {
+            $(this).parent().removeClass('mt-thanks-other-active');
+            $itemthanks = undefined;
+        }
+        else {
+            if($itemthanks !== undefined) {
+                $itemthanks.removeClass('mt-thanks-other-active');
+            };
+            $itemthanks = $(this).parent().addClass('mt-thanks-other-active');
+        }
+        return false;
+    });
+    $('.mt-thanks-other').bind({
+        mouseover: function(){
+            clearTimeout(timethanks);
+        },
+        mouseout: function(){
+            if($itemthanks !== undefined) {
+                timethanks = setTimeout(hidethanks,400);
+            };
+        }
+    });
+
+    function hidethanks() {
+        $itemthanks.removeClass('mt-thanks-other-active');
+        clearTimeout(timethanks);
+        $itemthanks = undefined;
+    }
+}

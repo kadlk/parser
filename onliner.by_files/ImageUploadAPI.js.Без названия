@@ -1,0 +1,72 @@
+function ImageUploadAPI(options, dispatcher) {
+    this.options = options || {};
+    this.dispatcher = dispatcher;
+    this.credentials = new Credentials(dispatcher);
+}
+
+ImageUploadAPI.prototype.getFormData = function (file) {
+    var formData = new FormData(),
+        uploadData = this.options.uploadData || {};
+
+    formData.append('file', file, file.name);
+
+    for (var name in uploadData) {
+        formData.append(name, uploadData[name]);
+    }
+
+    return formData;
+};
+
+ImageUploadAPI.prototype.upload = function (file, callbacks) {
+    var self = this,
+        formData = this.getFormData(file),
+        callbacks = callbacks || {},
+        upload;
+
+    upload = function () {
+        var request = $.ajax({
+            type: 'POST',
+            url: Onliner.apiUrls.upload + '/upload?token=' + self.credentials.token,
+            data: formData,
+            dataType: 'json',
+            xhrFields: {
+                withCredentials: true
+            },
+            processData: false,
+            contentType: false,
+            xhr: function () {
+                var xhr = new XMLHttpRequest();
+
+                if (xhr.upload && callbacks.progress) {
+                    xhr.upload.addEventListener('progress', function (event) {
+                        callbacks.progress && callbacks.progress(event);
+                    }, false);
+                }
+
+                return xhr;
+            }
+        });
+
+        request.done(function (data) {
+            callbacks.success && callbacks.success.apply(null, arguments);
+        });
+
+        request.fail(function () {
+            callbacks.error && callbacks.error.apply(null, arguments);
+        });
+
+        request.always(function () {
+            callbacks.always && callbacks.always.apply(null, arguments);
+        });
+    };
+
+    this.credentials.query(upload);
+};
+
+ImageUploadAPI.prototype.getStatus = function (id) {
+    return $.ajax({
+        type: 'GET',
+        url: Onliner.apiUrls.upload + '/upload/' + id,
+        dataType: 'json'
+    });
+};

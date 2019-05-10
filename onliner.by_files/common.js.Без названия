@@ -1,0 +1,2482 @@
+jQuery(document).ready(function($) {
+    var index  = 0;
+    var position = '';
+    var isSmsValidated = window.MODELS.currentUser.is_sms_validated();
+    $('body').mousemove(function(e) {
+        position = e;
+    });
+
+
+    $.post_view_count.put();
+
+    $('#btnFleaMarketPostingSubmitEnabled').on('click', function(event) {
+        event.preventDefault();
+
+        if (isSmsValidated) {
+            $(this).addClass('button-style_disabled');
+
+            $('#posting').submit();
+        } else {
+            window.profileAuth && window.profileAuth.validatePhone(function () {
+                isSmsValidated = true;
+            });
+        }
+    });
+
+    $('#btnReportSubmit').on('click', function(event) {
+        if (isSmsValidated) {
+            $(this).addClass('button-style_disabled');
+        } else {
+            event.preventDefault();
+
+            window.profileAuth && window.profileAuth.validatePhone(function () {
+                isSmsValidated = true;
+            });
+        }
+    });
+
+    $.browser.chrome = /chrome/.test(navigator.userAgent.toLowerCase());
+    if ($.browser.chrome) {
+        var phonePlaceholders = new Array();
+        var phoneElements = $("input[class*='phone-value']");
+
+        phoneElements.live('focus', function() {
+            var el = $(event.target);
+
+            if (!(el.attr('name') in phonePlaceholders)) {
+                phonePlaceholders[el.attr('name')] = el.attr('placeholder');
+            }
+            phonePlaceholders[el.attr('name')] = el.attr('placeholder');
+            el.attr('placeholder', '');
+        });
+
+        phoneElements.live('blur', function() {
+            var el = $(event.target);
+
+            el.attr('placeholder', phonePlaceholders[el.attr('name')]);
+        });
+    }
+
+    // Модальное окно
+    var modal = function(data, title) {
+        var offset = $('body').position();
+        $('.onliner-overlay').remove();
+        $('#modal').remove();
+
+        $('<div class="onliner-overlay"></div>').appendTo('body');
+        var box = $('<div id="modal">').appendTo('body');
+
+        box.append('<span class="simplemodal-close"></span>');
+
+        if (title) {
+            box.append('<h2 class="simplemodal-title">'+title+'</h2>');
+        }
+
+        $.each(data, function(index, value) {
+            box.append('<div class="simplemodal-content">'+value+'</div>');
+        });
+
+        box.css({
+            display: 'block',
+            //left: $(window).width() / 2 - (box.width() / 2),
+            top: $(window).scrollTop() + 100
+        });
+        getInstance();
+    };
+    var adddoc = function(doc_id){
+        $.markItUp( {replaceWith:'[geo='+doc_id+'][/geo]'});
+    };
+    var addGeo = function(){
+        $.ajax({
+            type: 'GET',
+            url:  '/sdapi/api/geo',
+            success: function(response) {
+                if (response) {
+                     addModal('/sdapi/api/geo');
+                }
+            },
+            dataType: 'html'
+        });
+    };
+
+    var temp = {quickReplyLock: false};
+
+    var tokenizer = {
+        _token: null,
+        _tokenLifeTime: null,
+        getUserToken: function (api) {
+            if (!this._token || !this._tokenLifeTime || this._tokenLifeTime <= this._currentSeconds()) {
+                this._getToken(api);
+            }
+
+            return this._token;
+        },
+        _currentSeconds: function () {
+            return new Date() / 1000;
+        },
+        _getToken: function (api) {
+            var time = this._currentSeconds();
+
+            var response = $.ajax({
+                async: false,
+                type: 'POST',
+                url: api,
+                data: {
+                    client_id: 'onliner_user',
+                    client_secret: $.cookie('onl_session'),
+                    grant_type: 'client_credentials'
+                }
+            }).responseText;
+
+            if (!response) {
+                ONotice.notify('Ошибка подключения');
+                return;
+            }
+
+            response = JSON.parse(response);
+
+            this._token = response.access_token;
+            this._tokenLifeTime = time + response.expires_in;
+        }
+    };
+
+    var alert_msg = ({
+        pm_empty:           'Нет отмеченных сообщений',
+        pm_confirm:         'Вы действительно хотите удалить отмеченные сообщения?',
+        pm_del_success:     'Ваши сообщения успешно удалены',
+        pm_read:            'Отметить сообщения как прочитанные?',
+        pm_save:            'Сохранить отмеченные сообщения?',
+        pm_save_success:    'Ваши сообщения успешно сохранены',
+        card_set:           'Произошла ошибка при попытке выставить карточку',
+        card_del:           'Произошла ошибка при попытке удалить карточку',
+        notes_add:          'Произошла ошибка при попытке добавить заметку о пользователе',
+        topic_add:          'Произошла ошибка при попытке добавить заметку о теме',
+        post_edit:          'Произошла ошибка при попытке изменить статус возможности редактировать сообщение',
+        thanks:             'Произошла ошибка при попытке отблагодарить пользователя',
+        edit_sig:           'Произошла ошибка при попытке изменить подпись',
+        delete_post:        'Вы действительно хотите удалить это сообщение?',
+        delete_post2:       'Произошла ошибка при удалении сообщения',
+        delete_file:        'Вы уверены, что хотите удалить эту картинку?',
+        delete_file2:       'Произошла ошибка при удалении файла',
+        quick_reply:        'Произошла ошибка при попытке ответить',
+        empty_msg:          'Текст сообщения не может быть пустым!',
+        delete_topic:       'Вы действительно хотите удалить эту тему?',
+        ban_user:           'Произощла ошибка при смене статуса пользователя',
+        wait:               '<b>Подождите...</b>',
+        quick_edit_stop:    'У Вас уже есть открытый пост для редактирования!',
+        quick_edit_error:   'Произошла ошибка при загрузке поста',
+        del_from_pm:        'Вы действительно хотите удалить это сообщение?',
+        del_from_pm_err:    'Произошла ошибка при удалении сообщения',
+        find_member:        'Введите имя пользователя',
+        topic_search:       'Введите строку для поиска',
+        premoderator:       'Произошла ошибка при попытке добавить/удалить куратора'
+    });
+
+    jQuery.open_edit_block = 0;
+
+    // bbcode settings
+    jQuery.phpbbSettings = {
+        resizeHandle: 0,
+        markupSet: [
+            {name:'Жирный текст: [b]текст[/b]', key:'B', openWith:'[b]', closeWith:'[/b]', className: 'fa-bbcode-bold'},
+            {name:'Наклонный текст: [i]текст[/i]', key:'I', openWith:'[i]', closeWith:'[/i]', className: 'fa-bbcode-em'},
+            {name:'Подчёркнутый текст: [u]текст[/u]', key:'U', openWith:'[u]', closeWith:'[/u]', className: 'fa-bbcode-u'},
+            {name:'Перечеркнутый текст: [s]текст[/s]', openWith:'[s]', closeWith:'[/s]', className: 'fa-bbcode-strike'},
+            {name:'Цитата: [quote]текст[/quote]', openWith:'[quote]', closeWith:'[/quote]', className: 'fa-bbcode-quote'},
+            {name:'Вставить картинку: [img]http://image_url[/img]', key:'P', replaceWith:'[img][![Ссылка на картинку]!][/img]', className: 'fa-bbcode-img'},
+            {name:'Ссылка: [url]http://url[/url] или [url=http://url]текст ссылки[/url]', openWith:'[url=[![Url]!]]', closeWith:'[/url]', placeHolder:'Введите текст', className: 'fa-bbcode-url'},
+            {name:'Код (программа): [code]код[/code]', openWith:'[code]', closeWith:'[/code]', className: 'fa-bbcode-code'},
+            {name:'Список: [list]текст[/list]', key:'L', openWith:'[list]\n[*] ', closeWith:'\n[/list]', className: 'fa-bbcode-li'},
+            {name:'Смайлики', className: 'fa-bbcode-smile'},
+            {name:'Скрытый текст [spoiler=описание]текст[/spoiler]', openWith:'[spoiler=[![Введите заголовок спойлера]!]]', closeWith:'[/spoiler]', className: 'fa-bbcode-spoiler'},
+            {name:'Цвет: [color=red]текст[/color]', openWith:'[color=цвет]', closeWith:'[/color]', className: 'fa-bbcode-textColor', additionalClass: 'insert-color', dropMenu: [
+                {name:'Жёлтый', openWith:'[color=yellow]', closeWith:'[/color]', className:"col1-1", divColor:"yellow"},
+                {name:'Оранжевый', openWith:'[color=orange]', closeWith:'[/color]', className:"col1-2", divColor:"orange"},
+                {name:'Красный', openWith:'[color=red]', closeWith:'[/color]', className:"col1-3", divColor:"red"},
+                {name:'Синий', openWith:'[color=blue]', closeWith:'[/color]', className:"col2-1", divColor:"blue"},
+                {name:'Фиолетовый', openWith:'[color=purple]', closeWith:'[/color]', className:"col2-2", divColor:"purple"},
+                {name:'Зелёный', openWith:'[color=green]', closeWith:'[/color]', className:"col2-3", divColor:"green"},
+                {name:'Серый', openWith:'[color=gray]', closeWith:'[/color]', className:"col3-2", divColor:"gray"},
+                {name:'Чёрный', openWith:'[color=black]', closeWith:'[/color]', className:"col3-3", divColor:"black"}
+            ]},
+            {name:'Размер: [size=50]маленький текст[/size]', openWith:'[size=размер]', closeWith:'[/size]', className: 'fa-bbcode-textSize', additionalClass: 'insert-size', dropMenu: [
+                {name:'Очень большой', openWith:'[size=300]', closeWith:'[/size]', tSize:"300"},
+                {name:'Большой', openWith:'[size=200]', closeWith:'[/size]', tSize:"200"},
+                {name:'Маленький', openWith:'[size=75]', closeWith:'[/size]', tSize:"75"},
+                {name:'Очень маленький', openWith:'[size=50]', closeWith:'[/size]', tSize:"50"}
+            ]},
+            {name:'Отображать количество просмотров этого сообщения', openWith:'[count]', className: 'fa-bbcode-count'},
+            {name:'Показать на карте',  className: 'fa-bbcode-geo',beforeInsert:function(markItUp){addGeo();}}
+        ]
+    };
+
+    var actions = {
+        // Предупреждения
+        'warning': {
+            // Устанавливаем предупреждение
+            'set': function() {
+                $(this).unbind('click').bind('click', function() {
+                    var anchor = $(this);
+                    var post = anchor.closest('.msgpost');
+                    var reason = prompt('Укажите причину выставления карточки:', '');
+
+                    if (reason != null) {
+                        $.ajax({
+                            url:  anchor.attr('href'),
+                            type: 'POST',
+                            data: {'warning': reason, 'action[add_warning]': ''},
+                            beforeSend: function(){
+                                ONotice.notify('Ставим карточку',0);
+                            },
+                            error: function(request, error) {
+                                alert(alert_msg['card_set']);
+                            },
+                            success: function(response) {
+                                if (response.title) {
+                                    alert(response.title);
+                                } else {
+                                    var responseObject = $(response);
+
+                                    $('.content', post).after(responseObject);
+                                    $('.card-set', post).hide();
+                                    $('.card-delete', post).show();
+                                    $('a.warning.delete', post).data('log_id', responseObject.attr('id'));
+                                    change_penalty_card(
+                                        parseInt($('.b-mtauthor', post).data('user_id')),
+                                        'set',
+                                        $.getSplitValue($('.card-level', responseObject).attr('class'), "-")
+                                    );
+                                }
+                                ONotice.remove();
+                                getInstance();
+                            },
+                            dataType: 'html'
+                        });
+                    }
+                    return false;
+                });
+            },
+            // Удаляем установленное ранее предупреждение
+            'delete': function() {
+                $(this).unbind('click').bind('click', function() {
+                    var anchor = $(this);
+                    var post = anchor.closest('.msgpost');
+                    var log_id = parseInt(anchor.data('log_id'));
+                    var postPenalty = $('.penalty', post);
+
+                    $.ajax({
+                        url:  anchor.attr('href'),
+                        type: 'POST',
+                        data: (log_id > 0) ? {'marknote[0]': log_id} : {},
+                        beforeSend: function(){
+                            ONotice.notify('Снимаем карточку',0);
+                        },
+                        error: function(request, error) {
+                            alert(alert_msg['card_del']);
+                        },
+                        success: function(response) {
+                            var info  = response.message;
+                            var error = response.errors;
+                            if( typeof(error) == 'undefined' || error.length == 0 ) {
+                                $('.card-set', post).show();
+                                $('.card-delete', post).hide();
+                                change_penalty_card(
+                                    parseInt($('.b-mtauthor', post).data('user_id')),
+                                    'delete',
+                                    $.getSplitValue($('.card-level', postPenalty).attr('class'), '-')
+                                );
+                                postPenalty.remove();
+                            } else {
+                                alert(error);
+                            }
+                            ONotice.remove();
+                            getInstance();
+                        },
+                        dataType: 'json'
+                    });
+                    return false;
+                });
+            }
+        },
+        // Заметки про пользователя
+        'notes': function() {
+            $(this).unbind('click').bind('click', function() {
+                var title = $(this).attr('title');
+                $.ajax({
+                    url:  $(this).attr('href'),
+                    type: 'GET',
+                    error: function(request, error) {
+                        alert(alert_msg['notes_add']);
+                    },
+                    success: function(response) {
+                        modal(response, title);
+                    },
+                    dataType: 'json'
+                });
+                return false;
+            });
+        },
+        'topic_notes': function() {
+            $(this).unbind('click').bind('click', function() {
+                var title = $(this).attr('title');
+                $.ajax({
+                    url:  $(this).attr('href'),
+                    type: 'GET',
+                    error: function(request, error) {
+                        alert(aler_msg['topic_add']);
+                    },
+                    success: function(response) {
+                        modal(response, title);
+                        getInstance();
+                    },
+                    dataType: 'json'
+                });
+                return false;
+            });
+        },
+        // Включение-выключение редактирования постов
+        'status': function() {
+            $(this).unbind('click').bind('click', function() {
+                var anchor = $(this);
+                $.ajax({
+                    url:  anchor.attr('href'),
+                    type: 'GET',
+                    error: function(request, error) {
+                        alert(alert_msg['post_edit']);
+                    },
+                    success: function() {
+                        $('.status-icon', anchor.parents('.b-bb-tls')).toggle();
+                        getInstance();
+                    }
+                });
+                return false;
+            });
+        },
+        // добавление/удаление в кураторы
+        'premoderator': function() {
+            $(this).unbind('click').bind('click', function() {
+                var anchor = $(this);
+                $.ajax({
+                    url:  $(this).attr('href'),
+                    type: 'GET',
+                    error: function(request, error) {
+                        alert(alert_msg['premoderator']);
+                    },
+                    success: function() {
+                        anchor.closest('ul').find('.premod-icon').toggle();
+                        getInstance();
+                    },
+                    dataType: 'text'
+                });
+                return false;
+            });
+        },
+        // Проспасибить
+        'thanks': function() {
+            $(this).unbind('click').bind('click', function(e) {
+                var div = $(this).parent('li');
+                $.ajax({
+                    url:  $(this).attr('href'),
+                    type: 'GET',
+                    error: function(request, error) {
+                        ONotice.notify(alert_msg['thanks']);
+                    },
+                    beforeSend: function(){
+                        ONotice.notify('Загрузка...',0);
+                    },
+                    success: function(data) {
+                        var post = $(e.currentTarget).parents('li.msgpost:first');
+                        $(div).replaceWith('<li style="padding:18px 0 5px 0; color:#555">Спасибо за &laquo;спасибо&raquo;! :)</li>');
+                        getInstance();
+
+                        if (post.is(':has(.i-thanks)')) {
+                            var i = parseInt(post.find('.msg:first').text(), 10) + 1;
+                            post.find('.msg:first').html(i + ' <i class="b-ico i-thanks"></i>');
+                        } else {
+                            post.find('.msg').before('<span class="msg" style="margin-right:0.3em">1 <i class="b-ico i-thanks"></i></span>');
+                        }
+
+                        //добавляем юзера в список поблагодаривших
+                        var author_div = $('#p'+data.msgpost_id + ' > .b-mt-author');
+                        var thanks_div = author_div.children('.b-mt-thanks');
+                        var ext = location.hostname.replace(/^[a-z0-9\-]*\.onliner\./,'');
+
+                        if( ! thanks_div.length)
+                        {
+                            thanks_div = $('<div>')
+                                            .addClass('b-mt-thanks')
+                                            .text('Спасибо сказали:')
+                                            .append(
+                                                $('<ul>').addClass('mt-thanks__ul')
+                                            )
+                                            .appendTo(author_div);
+                        }
+                        thanks_div
+                            .children('ul')
+                            .prepend(
+                                $('<li>')
+                                    .append(
+                                        $('<i>').addClass('b-ico')
+                                    )
+                                    .append(
+                                        $('<a>').attr('href','http://profilenew.onliner.'+ext+'/user/'+data.user_id).text(data.username)
+                                    )
+                            );
+                        ONotice.remove();
+                    },
+                    dataType: 'json'
+                });
+                return false;
+            });
+        },
+        'ajax': function() {
+            $(this).unbind('submit').bind('submit', function() {
+                var type = $(this).find('textarea').attr('name');
+                var form_id = $.getSplitValue($(this).find('textarea').attr('id'));
+                var form = $(this);
+
+                $.ajax({
+                    type: 'POST',
+                    url:  form.attr('action'),
+                    data: form.serialize(),
+                    error: function(request, error) {
+                        alert('Произошла ошибка при выбранном действии');
+                    },
+                    success: function(response) {
+                        if (response.message) {
+                            if (type == 'usersig') {
+                                $('.sig_u'+form_id).html(response.message);
+                            }
+                            else if (type == 'usernote') {
+                                $('._uns'+ form.attr('uid')).show();
+                                alert(response.message);
+                            }
+                            else {
+                                alert(response.message);
+                            }
+                            $('.onliner-overlay').remove();
+                            $('#modal').remove();
+
+                        } else {
+                            if (response.error) {
+                                alert(response.error);
+                            } else {
+                                alert(alert_msg['empty_msg']);
+                            }
+                        }
+                        getInstance();
+                    },
+                    dataType: 'json'
+                });
+                return false;
+            });
+        },
+
+        // Удаление постов
+        'delete_post': function() {
+            $(this).unbind('click').bind('click', function() {
+                var anchor = $(this);
+                if ($(anchor).hasClass('quick')) {
+                    var div = $(anchor).parent().parent().parent();
+                } else {
+                    var div = $(anchor).parent().parent().parent().parent().parent();
+                }
+                if ( confirm(alert_msg['delete_post']) ) {
+                    $.ajax({
+                        type: 'GET',
+                        url:  $(this).attr('href'),
+                        beforeSend: function() {
+                            $(div).find('.b-txt').addClass('ajax');
+                        },
+                        error: function(request, error) {
+                            alert(alert_msg['delete_post2']);
+                        },
+                        success: function() {
+                            // Скрытие блока
+                            $(div).slideUp('fast', function() {
+                                $(div).remove();
+                                even_odd();
+                            });
+
+                            // Если это последнее сообщение в ветке - редиректим
+                            // Не пугайтесь, что 1, а не 0 :)
+                            if ($('.b-messages-thread > li').size() == 1) {
+                                var redirect_url = 'viewforum.php?f=' + $.getUrlVar('f');
+                                var redirect_page = $.getUrlVar('start');
+                                if (typeof(redirect_page) != 'undefined') {
+                                    redirect_url = 'viewtopic.php?f=' + $.getUrlVar('f') + '&t=' + $.getUrlVar('t') + '&start=' + (redirect_page - 20);
+                                }
+                                window.location.replace(redirect_url);
+                                return false;
+                            }
+                            getInstance();
+                        },
+                        dataType: 'json'
+                    });
+                }
+                return false;
+            });
+        },
+
+        // Удаление файлов
+        'delete_file': function() {
+            $(this).unbind('click').bind('click', function() {
+                var form = $('#postform');
+                var div  = $(this).parent().parent('dl');
+                if ( confirm(alert_msg['delete_file']) ) {
+                    $.ajax({
+                        type: 'POST',
+                        url:  $(form).attr('action'),
+                        data: $(form).serialize() + '&' + $(this).attr('name') + '=',
+                        error: function(request, error) {
+                            alert(alert_msg['delete_file2']);
+                        },
+                        success: function() {
+                            $(div).fadeOut( 500, function() {
+                                $(div).remove();
+                            });
+                            getInstance();
+                        },
+                        dataType: 'json'
+                    });
+                }
+                return false;
+            });
+        },
+
+        'delete_new_file': function() {
+            $(this).unbind('click').bind('click', function() {
+                var form = $('#postform');
+                var file = $(this).attr('class').split(' ').slice(-1);
+                var div  = $(this).parent('div');
+                if ( confirm(alert_msg['delete_file']) ) {
+                    $.ajax({
+                        type: 'POST',
+                        url:  $(form).attr('action'),
+                        data: $(form).serialize() + '&' + file + '=',
+                        error: function(request, error) {
+                            alert(alert_msg['delete_file2']);
+                        },
+                        success: function() {
+                            $(div).fadeOut( 500, function() {
+                                $(div).remove();
+                            });
+                            getInstance();
+                        },
+                        dataType: 'json'
+                    });
+                }
+                return false;
+            });
+        },
+
+        // Ответ
+        'quick_reply': function() {
+            $(this).unbind('submit').bind('submit', function() {
+            	if (temp.quickReplyLock) {
+            		return false;
+            	}
+
+                $('.b-messages-thread .quick_edit_mode .cancel_quick_edit').each(function() {
+                    $(this).click();
+                });
+
+                if ($('textarea[name=message]').val().length < 3) {
+                    alert(alert_msg['empty_msg']);
+                } else {
+                    // Редиректы-шмедиректы
+                    if ($('.b-pages ul li:last-child').hasClass('page-next'))
+                    {
+                        var lastpage_url = $('.b-pages ul li:last-child').prev().find('a').attr('href');
+                    }
+                    else
+                    {
+                        var lastpage_url = $('.b-pages ul li:last-child a').attr('href');
+                    }
+
+                    //var current_page_var = $.getUrlVar('start');
+                    var current_page = $('input[name=current_page]').val();  //(typeof(current_page_var) == 'undefined') ? 0 : current_page_var;
+                    var last_page = (typeof(lastpage_url) != 'undefined') ? $.getUrlVar('start', lastpage_url) : 0;
+                    var last_post_id = $('.msgpost:last').attr('id').split('p');
+                    //var last_poster  = $.getSplitValue($('.msgpost:last .user-status').attr('id'));
+                    var last_poster  = $.getSplitValue($('.msgpost:last .mtauthor-nickname').attr('class'));
+                    var is_last_page = (last_page == current_page) ? 1 : 0;
+
+                    if (!isSmsValidated) {
+                        window.profileAuth && window.profileAuth.validatePhone(function () {
+                            isSmsValidated = true;
+                        });
+                    } else {
+                        $.ajax({
+                            url: $(this).attr('action'),
+                            type: 'POST',
+                            data: $(this).serialize() + '&last_post=' + last_post_id[1] + '&last_page=' + is_last_page + '&last_poster=' + last_poster,
+                            beforeSend: function (request) {
+                                // Preview?
+                                if ($('#newpost').length > 0) {
+                                    $('#newpost').removeAttr('id');
+                                }
+                                $('#p0').remove();
+                                $('textarea[name=message]').addClass('ajax');
+                                temp.quickReplyLock = true;
+                            },
+                            error: function (request, error) {
+                                alert(alert_msg['quick_reply']);
+                            },
+                            complete: function () {
+                                temp.quickReplyLock = false;
+                                $('textarea[name=message]').removeClass('ajax');
+                            },
+                            success: function (data) {
+                                if (data.message) {
+                                    $('#btn-close-preview').toggle();
+                                    if (parseInt(data.offset) != current_page) {
+                                        var redirect_url = 'viewtopic.php?t=' + parseInt($("input[name=topic_id]").attr("value")) + '&start=' + parseInt(data.offset) + '#last';
+                                        window.location.replace(redirect_url);
+                                        return;
+                                    } else {
+                                        var messageArea = $('textarea[name=message]');
+                                        var preview = $('#post-preview');
+
+                                        if (messageArea.is(':hidden')) {
+                                            preview.hide();
+                                            $('.b-fpm-area').show();
+                                            $('.preview').text('Предварительный просмотр');
+
+                                        }
+                                        if (data.message.length < 100) {
+                                            alert(data.message);
+                                            $('textarea[name=message]').removeClass('ajax').val('');
+                                            getInstance();
+                                            return false;
+                                        }
+
+                                        if ($('.msgpost:only-child').hasClass('msgfirst')) {
+                                            if ($('.msgpost:last').hasClass('own')) {
+                                                $('.msgpost:only-child').before(data.message);
+                                                $('.msgpost:last').remove();
+                                                $('.msgpost:only-child').addClass('msgfirst');
+                                                $.scrollTo('#newpost', 400);
+                                                $('.qq-upload-list').empty();
+                                                $('textarea[name=message]').removeClass('ajax').val('');
+                                                getInstance();
+                                                even_odd();
+                                                return false;
+                                            }
+                                        }
+
+                                        if ($('.msgpost:last').hasClass('own')) {
+                                            $('.msgpost:last').remove();
+                                        }
+
+                                        if ($('.msgpost:last').length > 0) {
+                                            $('.msgpost:last').after(data.message);
+                                        } else {
+                                            $('.b-messages-thread').html(data.message);
+                                        }
+
+                                        $.scrollTo('#newpost', 400);
+                                        $('.msgpost:last').hide().fadeIn(500);
+                                        $('.qq-upload-list').empty();
+                                        $('#files').empty();
+                                        $('textarea[name=message]').removeClass('ajax').val('');
+                                        even_odd();
+                                        getInstance();
+                                        userCardsData.updateCards(last_poster);
+
+                                        return false;
+                                    }
+
+                                    $('textarea[name=message]').val('');
+                                } else {
+                                    if (data.error) {
+                                        alert(data.error);
+                                    } else {
+                                        alert(alert_msg['empty_msg']);
+                                    }
+                                }
+
+                                getInstance();
+                            },
+                            dataType: 'json'
+                        });
+                    }
+                }
+                return false;
+            });
+        },
+
+        'preview': function() {
+            $(this).unbind('click').bind('click', function(){
+                var messageArea = $('textarea[name=message]');
+                var preview = $('#post-preview');
+
+                if (messageArea.is(':hidden')) {
+                    preview.hide();
+                    $('.b-fpm-area').show();
+                    $(this).text('Предварительный просмотр');
+                    return false;
+                }
+                else {
+                    $(this).text('Продолжить редактирование');
+                }
+
+                if (messageArea.val().length < 3 ) {
+                    alert(alert_msg['empty_msg']);
+                } else {
+                    var form = $('#postform');
+
+                    $('.b-messages-thread .quick_edit_mode .cancel_quick_edit').each(function() {
+                        $(this).click();
+                    });
+
+                    $.ajax({
+                        url:  $(form).attr('action'),
+                        type: 'POST',
+                        data: $(form).serialize() + '&preview=preview',
+                        beforeSend: function(request) {
+                            $('#p0').remove();
+                            messageArea.addClass('ajax');
+                        },
+                        error: function(request, error) {
+                            alert('Произошла ошибка при попытке ответить');
+                        },
+                        success: function(data) {
+                            if (data.message) {
+                                $('.b-fpm-area').hide();
+                                preview.find('div.b-txt').html(data.message);
+                                preview.show();
+                                $('#btn-close-preview').toggle();
+                            } else {
+                                if (data.error) {
+                                    alert(data.error);
+                                } else {
+                                    alert('Произошла ошибка при попытке просмотреть сообщение');
+                                }
+                            }
+                            messageArea.removeClass('ajax');
+                            getInstance();
+                        },
+                        dataType: 'json'
+                    });
+                }
+                return false;
+            });
+        },
+
+        'btn-close-preview': function() {
+            $(this).unbind('click').bind('click', function() {
+                $(this).toggle();
+                $('#btn-preview-post').toggle();
+                $('#post-preview').hide();
+                $('.b-fpm-area').show();
+                return false;
+            });
+        },
+
+        // inline-редактирование
+        'quick_edit': function() {
+            $(this).unbind('click').bind('click', function() {
+                jQuery.open_edit_block++;  // Math.round(new Date().getTime()/1000.0) //e.timeStamp;
+
+                var count = $('.b-messages-thread').find('.quick_edit_mode') ;
+                if (count.length > 0 || jQuery.open_edit_block > 1){
+                    alert(alert_msg['quick_edit_stop']) ;
+                    return false;
+                }
+
+                var post_id = $.getSplitValue( $(this).attr('id') );
+                var post = $('#p' + post_id);
+
+                if (post.hasClass('first'))
+                {
+                    return true;
+                }
+
+                $.ajax({
+                    url:  './quickedit.php',
+                    type: 'POST',
+                    data: {'post_id': post_id},
+                    beforeSend: function(request) {
+                        ONotice.notify('Загрузка...',0);
+                        $('#quickedit-textarea').addClass('ajax');
+                        $('#p' + post_id + ' .b-txt').addClass('ajax');
+                    },
+                    error: function(request, error) {
+                        if (request.status == 401) {
+                            Onliner.redirect('https://profile.onliner.' + Onliner.domain + '/logout');
+
+                            return;
+                        }
+                        ONotice.notify(alert_msg['quick_edit_error']);
+                        alert(alert_msg['quick_edit_error']);
+                    },
+                    success: function(response) {
+                        $('#p' + post_id + ' .b-txt').removeClass('ajax');
+                        post.hide();
+                        $('<div class="quick_edit_mode">').insertAfter(post).html(response);
+                        getInstance();
+                        ONotice.remove();
+                        jQuery.open_edit_block = 0;
+                    },
+                    dataType: 'html'
+                });
+
+                return false;
+            });
+        },
+
+        'cancel_quick_edit': function() {
+            $(this).unbind('click').bind('click', function() {
+                var post_id = $.getSplitValue( $(this).attr('id') );
+                var post = $('#p' + post_id);
+
+                $('.quick_edit_mode').remove();
+                post.show();
+
+                getInstance();
+
+                return false;
+            });
+        },
+
+        'quick_edit_form': function() {
+            $(this).unbind('submit').bind('submit', function() {
+                var post_id = $.getSplitValue( $(this).attr('id') );
+
+                if ($('#quickedit-textarea').val().length > 1)
+                {
+                    $.ajax({
+                        url:  './quickedit.php',
+                        type: 'POST',
+                        data: {'post_id': post_id, 'contents': $(this).find('#quickedit-textarea').val(), 'submit': 'true'},
+                        beforeSend: function(request) {
+                            $('#p' + post_id + ' .b-txt').addClass('ajax');
+                            ONotice.notify('Загрузка...',0);
+                        },
+                        error: function(request, error) {
+                            if (request.error().status === 403) {
+                                window.profileAuth && window.profileAuth.validatePhone(function () {
+                                    isSmsValidated = true;
+                                });
+                            } else {
+                                ONotice.notify('Произошла ошибка при редактировании сообщения');
+                            }
+                        },
+                        success: function(response) {
+
+                            $('.quick_edit_mode').remove();
+                            $('#p' + post_id).show();
+
+                            $('#message_' + post_id).html(response);
+
+                            getInstance();
+                            ONotice.remove();
+                            jQuery.open_edit_block = 0;
+                        },
+                        dataType: 'html'
+                    });
+                }
+                return false;
+            });
+        },
+
+        // Добавить/удалить закладку
+        'i-fav': function() {
+            $(this).unbind('click').bind('click', function() {
+                var link = $(this);
+                $.ajax({
+                    url:  $(this).attr('href') + '&'+ new Date().getTime(),
+                    type: 'GET',
+                    error: function(request, error) {
+                        alert('Произошла ошибка при добавлении в закладки');
+                    },
+                    success: function(data) {
+                        link.toggleClass('i-fav-star');
+                        var el = $('.fav-txt');
+                        if (el.hasClass('infav'))
+                        {
+                            el.removeClass('infav');
+                            el.get(0).childNodes[1].nodeValue = 'Добавить в закладки';
+                        }
+                        else
+                        {
+                            el.addClass('infav');
+                            el.get(0).childNodes[1].nodeValue = 'Удалить закладку';
+                        }
+                    },
+                    dataType: 'json'
+                });
+                return false;
+            });
+        },
+
+        'fav-txt': function(){
+            $(this).unbind('click').bind('click', function(){
+                var link = $(this);
+                $.ajax({
+                    url:  $(this).attr('href') + '&'+ new Date().getTime(),
+                    type: 'GET',
+                    error: function(request, error) {
+                        alert('Произошла ошибка при добавлении в закладки');
+                    },
+                    success: function(r) {
+                        if (r != null && r.result == 'ok')
+                        {
+                            if (link.hasClass('infav')) {
+                                link.removeClass('infav');
+                                link.get(0).childNodes[1].nodeValue = 'Добавить в закладки';
+                            } else {
+                                link.addClass('infav');
+                                link.get(0).childNodes[1].nodeValue = 'Удалить закладку';
+                            }
+
+                            $('.m-title .i-fav').toggleClass('i-fav-star');
+                        }
+                        getInstance();
+                    },
+                    dataType: 'json'
+                });
+                return false;
+            });
+        },
+
+        // ii@ Открывать/закрывать редактор для создания новой темы на форуме
+        // или нового объявления на барахолке
+        'new_topic': function() {
+            $(this).unbind('click').bind('click', function() {
+                var action = $(this).attr('action') ;
+                var text = ($('#post_topic').is(':hidden')) ? 'Закрыть редактор' : action ;
+                $('span#submit_text').text(text) ;
+                $('#post_topic').toggle('normal', function(){$('#subject').focus();}) ;
+                $('#lastclick').val($.getUnixTimestamp());
+                return false;
+            });
+        },
+
+        // ii@ Удаление персональных сообщений
+        'delete_pm': function() {
+            $(this).unbind('click').bind('click', function() {
+                var url =  $(this).attr('linksend') ;
+                var folder = $(this).attr('folder') ;
+                var parm = '';
+                $('#pm_list input').each( function() {
+                    if ($(this).attr('checked')) {
+                          parm +=  $(this).val() + ',' ;
+                    }
+                });
+
+                if (parm.length == 0) {
+                    alert(alert_msg['pm_empty']);
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data:  {
+                        'marked_msg_id': parm,
+                        'submit_mark': '1',
+                        'mark_option': 'delete_marked',
+                        'cur_folder_id': folder
+                    },
+                    beforeSend: function(){return confirm(alert_msg['pm_confirm'])},
+                    success: function(){
+                        $('#pm_list input').each( function() {
+                            if ($(this).attr('checked')) {
+                                $('#' + $(this).val()).hide();
+                                $(this).attr('checked', false);
+                            }
+                            $('#select_all').attr('checked', false);
+                        });
+                        alert(alert_msg['pm_del_success']);
+                    }
+                });
+                return false;
+            });
+         },
+
+         // ii@ mark the messages as read
+         'pm_markread': function() {
+            $(this).unbind('click').bind('click', function() {
+                var parm = '';
+                var url =  $(this).attr('linksend') ;
+                var folder = $(this).attr('folder') ;
+                $('#pm_list input').each( function() {
+                    if ($(this).attr('checked')) {
+                        parm += $(this).val() + ',' ;
+                    }
+                });
+
+                if (parm.length == 0) {
+                    alert(alert_msg['pm_empty']);
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data:  {
+                        'marked_msg_id': parm,
+                        'submit_mark': '1',
+                        'mark_option': 'mark_read',
+                        'cur_folder_id': folder
+                    },
+                    beforeSend: function(){return confirm(alert_msg['pm_read'])},
+                    success: function(){
+                        $('#pm_list input').each( function() {
+                            if ($(this).attr('checked')) {
+                                $('#i_'+ $(this).val()).removeClass("b-ico forum_unread");
+                                $('#i_'+ $(this).val()).addClass("b-ico forum_read");
+                                $(this).attr('checked', false);
+                            }
+                            $('#select_all').attr('checked', false);
+                        });
+                    }
+                });
+                return false;
+            });
+
+         },
+
+         // ii@ Сохранить отмеченные сообщения
+         'pm_save': function() {
+            $(this).unbind('click').bind('click', function() {
+                var parm = '';
+                var url =  $(this).attr('linksend') ;
+                var folder = $(this).attr('folder') ;
+                $('#pm_list input').each( function() {
+                    if ($(this).attr('checked')) {
+                        parm += $(this).val() + ',' ;
+                    }
+                });
+                if (parm.length == 0) {
+                    alert(alert_msg['pm_empty']);
+                    return false;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data:  {
+                        'marked_msg_id': parm,
+                        'submit_mark': '1',
+                        'mark_option': 'mark_save',
+                        'cur_folder_id': folder
+                    },
+                    beforeSend: function(){return confirm(alert_msg['pm_save'])},
+                    success: function(){
+                        $('#pm_list input').each( function() {
+                            if ($(this).attr('checked')) {
+                                $('#' + $(this).val()).hide();
+                                $(this).attr('checked', false);
+                            }
+                            $('#select_all').attr('checked', false);
+                        });
+                        alert(alert_msg['pm_save_success']);
+                    }
+                });
+                return false;
+            });
+         },
+
+        // Закрываем модальное окно
+        'simplemodal-close': function() {
+            $(this).unbind('click').bind('click', function() {
+                $('.onliner-overlay').remove();
+                $('#modal').remove();
+                return false;
+            });
+        },
+
+        // ii@  Check Cоmpose PM form before sending -
+        // и не только. Можно применять к другим формам, добавляя аттрибуты ALIAS и REQUIRE = 'true'
+        // для обязательных полей
+        // сейчас используется в PM и при создании новой темы
+        'postform':function () {
+            $(this).unbind('submit').bind('submit', function () {
+                var formData = $(this).serializeArray();
+                var alias, el, allowSubmit = true;
+                jQuery.each(formData, function (i, parameter) {
+                    el = $('*[name="' + parameter.name + '"]');
+                    if ($(el).val() == "" && $(el).attr('require') == 'true') {
+                        alias = $(el).attr('alias');
+                        alert('Поле "' + alias + '" не может быть пустым!');
+                        $(el).focus();
+                        return allowSubmit = false;
+                    }
+                });
+
+                if ($(this).hasClass('disabled')) {
+                    allowSubmit = false;
+                }
+
+                if (allowSubmit) {
+                    $(this).addClass('disabled');
+                }
+
+                return allowSubmit;
+            });
+        },
+
+        // ii@ удаление топика по кнопке "Удалить тему"
+        'delete_topic': function() {
+            $(this).unbind('click').bind('click', function() {
+                return confirm(alert_msg['delete_topic']) ;
+            })
+        },
+
+        // ii@ удаление РМ в режиме просмотра
+        'del_from_pm': function() {
+            $(this).unbind('click').bind('click', function() {
+                if ( confirm(alert_msg['del_from_pm']) )
+                {
+                    $.ajax({
+                        url:  $(this).attr('href'),
+                        type: 'GET',
+                        error: function(request, error) {
+                            alert(alert_msg['del_from_pm_err']);
+                        },
+                        success: function(data) {
+                            var url = $('#return_to_folder').attr('value');
+                            window.location.replace(url);
+                         }
+                    });
+                }
+                return false;
+            })
+        },
+
+        'edit-sig': function() {
+            $(this).unbind('dblclick').bind('dblclick', function() {
+                var title = $(this).attr('title');
+                $.ajax({
+                    url:  $(this).attr('link'),
+                    type: 'GET',
+                    error: function(request, error) {
+                        alert(alert_msg['edit_sig']);
+                    },
+                    success: function(response) {
+                        modal(response, title);
+                        getInstance();
+                    },
+                    dataType: 'json'
+                });
+                return false;
+            });
+        },
+
+        // ii@ кнопка модератора "ДА!"
+        'moderator_btn': function() {
+            $(this).unbind('click').bind('click', function() {
+               $('#moderator_form').trigger('submit');
+               return false ;
+            });
+        },
+
+        // ii@ кнопка поиска по форуму
+        'search_btn': function() {
+            $(this).unbind('click').bind('click', function() {
+               var kword = $.trim($('#search_keywords').val());
+               if (!kword || kword == 'В сообщениях темы' ){
+                   $('#search_keywords').focus().val('') ;
+                   return false ;
+               }
+            });
+        },
+
+        // ii@ Для поиска мемберов на memberlist.php
+        'member_search_btn': function() {
+            $(this).unbind('click').bind('click', function() {
+               var href = $.trim( $('#username').val() ) ;
+               if (!href || href == 'Поиск по никнейму' ){
+                   alert(alert_msg['find_member']) ;
+                   $('#username').val('').focus() ;
+                   return false ;
+               }
+            });
+        },
+
+       // ii@ ban/unbun user from profile page
+        'ban_user': function() {
+            $(this).unbind('click').bind('click', function() {
+                var ban = $('#user_status').hasClass('hide') ;
+                $.ajax({
+                    url:  $(this).attr('href'),
+                    type: 'GET',
+                    data: {'ban':ban},
+                    beforeSend: function() {
+                        $('#notify_info').append(alert_msg['wait']);
+                    },
+                    error: function() {
+                        alert(alert_msg['ban_user']);
+                        $('#notify_info').text('');
+                    },
+                    success: function(data) {
+                        if (ban) {
+                            $('#ban_text').text('Разбанить');
+                            $('#user_status').removeClass('hide');
+                        }else{
+                            $('#ban_text').text('Забанить');
+                            $('#user_status').addClass('hide');
+                        }
+                        $('#notify_info').text('');
+                    },
+                    dataType: 'text'
+                });
+                return false;
+
+            });
+        },
+
+
+        // Клики-чики-пики
+        'btn-reply': function() {
+            var $postform = $('#postform');
+
+            if (!$postform.length) {
+                return;
+            }
+
+            $(this).unbind('click').bind('click', function() {
+                $.scrollTo('#postform', 400);
+                $('#postmessage').focus();
+                return false;
+            });
+        },
+
+
+        // Для новой темы
+        'f': function() {
+            $(this).unbind('click').bind('click', function() {
+                for (var i = 0; i < 4; i++) {
+                    var el = $('#status_'+i);
+                    if (el.hasClass('active')) el.toggleClass('active') ;
+                }
+                $(this).addClass('active') ;
+                $('#topic_type').val($(this).attr('id').substr(7,1));
+                return false
+            });
+        },
+
+        // Функции изменения профиля
+        'ajaxedit': function() {
+            $(this).unbind('click').bind('click', function() {
+                var cur = $(this).attr('class').replace('ajaxedit ','');
+
+                $('.ajaxedit').each(function(){
+                    var div = $.grep($(this).attr('class').split(/\s+/), function(value) {
+                        return value != 'ajaxedit';
+                    });
+                    if (cur == div) {
+                        $('#'+div).toggle();
+                    }
+                    else{
+                        $('#'+div).hide();
+                    }
+                });
+
+                if(cur == 'edit') {
+                    $('#notedit').toggle();
+                }
+                else{
+                    $('#notedit').show();
+                }
+                return false;
+            });
+        },
+
+        // Вставка никнейма в поле ответа
+        'mtauthor-nickname': function() {
+            $(this).find('a._name').unbind('click').bind('click', function() {
+                $.markItUp({target:'#postmessage', replaceWith: '[b]'+$(this).attr('title')+'[/b], '});
+                return false;
+            });
+        },
+
+        'msgpost': function() {
+            $(this).unbind('mouseleave').bind('mouseleave', function() {
+                $(this).find('.li-bestbest').removeClass('li-best-hover');
+                return false;
+            });
+        },
+
+        'li-bestbest a.li-bb-link': function() {
+            $(this).unbind('click').bind('click', function() {
+                if($(this).parent().attr('class').search("li-best-hover") == -1){
+                    $(this).parent().addClass('li-best-hover');
+                } else {
+                    $(this).parent().removeClass('li-best-hover');
+                }
+                return false;
+            });
+        },
+
+        // Вставка никнейма в поле ответа
+        'li-cite': function() {
+            $(this).find('a').unbind('click').bind('click', function() {
+                var cite_id  = $.getSplitValue($(this).attr('class'));
+                var cite_author = $('#p'+cite_id).find('.mtauthor-nickname:visible a').attr('title');
+                addquote(cite_id, cite_author);
+                return false;
+            });
+        },
+        // Вставка никнейма в поле ответа
+        'addgeo': function() {
+        },
+
+        'bookmark_device': function() {
+            $(this).unbind('click').bind('click', function() {
+                var productKey = $(this).attr('id'),
+                    tokenApi = $(this).data('token-api'),
+                    bookmarksApi =$(this).data('bookmarks-api'),
+                    notify = '',
+                    method = '',
+                    successFunc = function () {},
+                    failFunc = function () {},
+                    showAdd = function () {
+                        $('li.fav').removeClass('infav')
+                            .find('a').html('<i class="ico"></i> Добавить в закладки');
+                    },
+                    showRemove = function () {
+                        $('li.fav').addClass('infav')
+                            .find('a').html('<i class="ico"></i> Убрать из закладок');
+                    };
+
+                if ($(this).parent().hasClass('infav')) {
+                    notify = 'Удаляю закладку...';
+                    method = 'DELETE';
+                    successFunc = showAdd;
+                    failFunc = showRemove;
+                } else {
+                    notify = 'Добавляю в закладки...';
+                    method = 'POST';
+                    successFunc = showRemove;
+                    failFunc = showAdd;
+                }
+
+                ONotice.notify(notify, 0);
+                successFunc();
+
+                $.ajax({
+                    type: method,
+                    url: bookmarksApi,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'bearer ' + tokenizer.getUserToken(tokenApi));
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.setRequestHeader('Accept', 'application/json');
+                    },
+                    data: JSON.stringify({product_keys:[productKey]})
+                })
+                .done(function () {successFunc(); ONotice.remove();})
+                .fail(function () {failFunc(); ONotice.notify('Ошибка подключения');});
+
+                return false;
+            });
+        },
+
+        'b-mtauthor-i': function() {
+            var cardauthor = $(this);
+            $('.ava-box', cardauthor).bind('mouseenter', function() {
+                userCardsData.updateCards($('.b-mta-card', cardauthor).data('user-id'));
+                $(this).parents('.b-mtauthor-i').addClass('mtauthor-active');
+
+            });
+            cardauthor.bind('mouseleave', function(){
+                var el = $(this);
+                if(el.hasClass('mtauthor-active')) {
+                    el.removeClass('mtauthor-active');
+                }
+            });
+        }
+    };
+
+    var mcpActions = {
+        // Предупреждения
+        'ucards': {
+            // Устанавливаем предупреждение
+            'set': function() {
+                $(this).unbind('click').bind('click', function(e) {
+                    var anchor = $(this);
+                    var reason = prompt('Укажите причину выставления карточки:', '');
+
+                    if (reason != null) {
+                        $.ajax({
+                            url:  anchor.attr('href'),
+                            type: 'POST',
+                            data: {'warning': reason, 'action[add_warning]': ''},
+                            dataType: 'html',
+                            error: function(request, error) {
+                                alert('Произошла ошибка при попытке выставить карточку');
+                            },
+                            success: function(response) {
+                                if (response.title) {
+                                    alert(response.title);
+                                } else {
+                                    window.location = window.location;
+                                }
+                            }
+                        });
+                    }
+                    e.preventDefault();
+                    return false;
+                });
+            }
+        }
+    };
+
+    function getInstance()
+    {
+        for (var i in actions) {
+            if (typeof(actions[i]) == 'object') {
+                for (var j in actions[i]) {
+                    if (actions[i][j]) {
+                        $('.' + i + '.' + j).each(actions[i][j]);
+                    }
+                }
+            } else {
+                $('.' + i).each(actions[i]);
+            }
+        }
+    }
+
+    function getMcpInstance()
+    {
+        for (var i in mcpActions) {
+            if (typeof(mcpActions[i]) == 'object') {
+                for (var j in mcpActions[i]) {
+                    if (mcpActions[i][j]) {
+                        $('.' + i + '.' + j).each(mcpActions[i][j]);
+                    }
+                }
+            } else {
+                $('.' + i).each(mcpActions[i]);
+            }
+        }
+    }
+
+    getInstance();
+    getMcpInstance();
+
+    // Переключение табов при создании или редактировании темы/поста
+    $('.pane').hide();
+    $('ul.fpm-tabs li:first').addClass('active').show();
+    $('.pane:first').show();
+    $('ul.fpm-tabs li').click(function() {
+        $('ul.fpm-tabs li').removeClass('active');
+        $(this).addClass('active');
+        $('.pane').hide();
+        var activeTab = $(this).find('a').attr('href');
+        $(activeTab).show();
+        return false;
+    });
+
+    // Голосования
+    $(".pollthread-vars input").unbind('change').bind('change', function() {
+        if ($(this).attr('type') == 'radio') {
+            $(this).parent().parent().find('li').removeClass("active");
+            $(this).parent().toggleClass("active");
+        } else {
+            $(this).parent().toggleClass("active");
+        }
+    });
+
+    /**
+     * ii@
+     * Select checkboxes on read/unread/all private messages.
+    */
+    $('input#select_all').change( function() {
+        var check = $(this).attr('checked') ;
+        $('input:checkbox').each( function() {
+                $(this).attr('checked', check) ;
+        });
+    });
+
+    $('a#read, a#unread, a#all').click( function() {
+        var id = $(this).attr('id') ;
+
+        if (id == 'all'){
+            $('input:checkbox').each( function() {
+                    $(this).attr('checked', true) ;
+            });
+            return false ;
+        }
+
+        $('input:checkbox').each( function() {
+                ( $(this).attr('id') == id ) ? $(this).attr('checked', true) : $(this).attr('checked', false);
+        });
+        return false;
+    });
+
+    $('.b-messages-thread, .baraholka-content, #post-preview').on('click', '.msgpost-spoiler-hd', function() {
+        var $content = $($(this).parents('.msgpost-spoiler').find('.msgpost-spoiler-txt')[0]),
+            $spoiler = $(this).closest('.msgpost-spoiler');
+
+        $content.toggle();
+        $spoiler.toggleClass('msgpost-spoiler-open');
+
+        return false;
+    });
+
+    // Ctrl+Enter submit
+    $('#postmessage').keydown(function (e) {
+        if (e.ctrlKey && e.keyCode == 13) {
+            $(this).submit();
+            return false;
+        }
+    });
+
+    // Baraholka auto fill description
+    if ($('textarea[name=topic_desc]').length > 0) {
+        var desc = 'textarea[name=topic_desc]',
+            limit = parseInt($(desc).attr('maxlength')),
+            mode;
+
+        try {
+            mode = JSON.parse('{"' + decodeURI(window.location.search.replace('?', '')).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}').mode;
+        } catch (exception) {
+        }
+
+        $(desc).live('focus', function() {
+            $(desc).addClass('active');
+        });
+
+        (mode !== 'edit') && $('textarea[name=message]').live('keyup', function() {
+            if ( ! $(desc).hasClass('active')) {
+               var s = $(this).val();
+                while (s.indexOf("\n") > -1)
+                    s = s.replace("\n"," ");
+
+                $(desc).val(s);
+
+                var text  = $(desc).val();
+                var chars = text.length;
+                if (chars > limit) {
+                    var new_text = text.substr(0, limit);
+                    $(desc).val(new_text);
+                }
+            }
+        });
+    }
+
+    function even_odd() {
+        var even_odd_classes = {0: 'msgpost-odd', 1: 'msgpost-even'};
+        $('.b-messages-thread > li').each(function(index) {
+            //if ($(this).is(':first-child')) return;
+            if ($(this).hasClass('msgfirst')) {
+                return;
+            }
+            $(this).removeClass('msgpost-odd').addClass(even_odd_classes[index % 2]);
+        });
+    }
+
+    function change_penalty_card(userId, type, value) {
+        $('.b-mtauthor[data-user_id="' + userId + '"] .b-mta-penalty').each(function (i, element) {
+            var penaltiesBlock = $(element);
+            var penaltiesSearch = penaltiesBlock.parent();
+            var warningsLevel = penaltiesBlock.data('warnings_level');
+
+            if (warningsLevel == 0 && type == 'set') {
+                penaltiesSearch.show();
+            }
+
+            warningsLevel = (type == 'set') ? warningsLevel + parseInt(value) : warningsLevel - parseInt(value);
+
+            penaltiesBlock.data('warnings_level', warningsLevel)
+            penaltiesBlock.find('span').remove();
+            penaltiesSearch.hide();
+            if (warningsLevel > 0) {
+                switch (warningsLevel) {
+                    case 1:
+                    case 2: {
+                        penaltiesBlock.append('<span class="penalty-' + warningsLevel + '"></span>');
+                        break;
+                    }
+                    case 3: {
+                        penaltiesBlock.append('<span class="penalty-1"></span>');
+                        penaltiesBlock.append('<span class="penalty-2"></span>');
+                        break;
+                    }
+                    default: {
+                        penaltiesBlock.append('<span class="penalty-4"></span>');
+                        break;
+                    }
+                }
+                penaltiesSearch.show();
+            }
+        });
+    }
+
+    $('#select-all-my-adverts').bind({
+        click: function() {
+            $('.check-box-1').attr('checked', !$('.check-box-1').is(':checked'));
+            return false;
+        }
+    });
+
+    // regions dropdown
+    $('.onav__subnav .region-select a, .project-navigation .region-select a').click(function() {
+        var regionsDropDown = $('.b-regions-dropdown');
+        if (regionsDropDown.is(':visible')) {
+            regionsDropDown.hide();
+        } else {
+            regionsDropDown.show();
+        }
+        return false;
+    });
+    $('.b-regions-dropdown').bind({
+        click: function(event) {
+            event.stopPropagation();
+        }
+    });
+    $('html').click(function() {
+        $('.b-regions-dropdown').hide();
+    });
+    $('.b-regions-dropdown dd').delegate('a', 'click', function(e) {
+        var name = 'city';
+        var region = $(this).find('span b').html();
+        if ($(this).parents('.b-regions-dropdown__top').length == 0) {
+            name = 'region';
+            region += ' область';
+        }
+        Cookie.create('region', name + '=' + $(this).find('span:first').attr('data'));
+
+
+        $('.onav__subnav .region-select .pseudo-link span, .project-navigation .region-select .pseudo-link span').html(region);
+        $('.b-regions-dropdown').hide();
+
+        var previousSelection = $('.b-regions-dropdown .selected');
+        previousSelection.removeClass('selected').wrap('<a href="' + previousSelection.attr('data') + '"></a>');
+
+        $(this).replaceWith($($(this).html()).addClass('selected'));
+
+        if ($(this).find('span:first').attr('data') == 0) {
+            window.location.reload(true);
+            return false;
+        }
+        var urlParam = [];
+        $.each(decodeURIComponent(window.location.search).substr(1).split('&'), function(index, data) {
+            if (data.length > 0) {
+                var data = data.split('=');
+                if (data[0] != 'topicRegion')
+                {
+                    urlParam.push(data.join('='));
+                }
+            }
+        });
+
+        if (urlParam.length > 0) {
+            window.location = window.location.protocol + '//' + window.location.hostname + window.location.pathname +'?'+ urlParam.join('&');
+        } else {
+            window.location.reload(true);
+        }
+        return false;
+    });
+});
+
+jQuery.extend({
+    getUrlVars: function(url){
+        var vars = [], hash;
+        if(typeof(url) == 'undefined') {
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        } else {
+            var hashes = url.slice(url.indexOf('?') + 1).split('&');
+        }
+        for (var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    },
+    getUrlVar: function(name, url){
+        return jQuery.getUrlVars(url)[name];
+    },
+    getUnixTimestamp: function(){
+        return Math.round(((new Date()).getTime()-Date.UTC(1970,0,1))/1000);
+    },
+    template: function(tmpl, vals) {
+        var rgxp, repr;
+
+        // default to doing no harm
+        tmpl = tmpl   || '';
+        vals = vals || {};
+
+        // regular expression for matching our placeholders; e.g., #{my-cLaSs_name77}
+        rgxp = /#\{([^{}]*)}/g;
+
+        // function to making replacements
+        repr = function (str, match) {
+            return typeof vals[match] === 'string' || typeof vals[match] === 'number' ? vals[match] : str;
+        };
+
+        return tmpl.replace(rgxp, repr);
+    },
+    getSplitValue: function(value, sep) {
+        var split = value.split("_");
+        if (sep) {
+            split = value.split(sep);
+        }
+
+        var el = $(split).length - 1;
+        return split[el];
+    }
+});
+
+// Tasty cookies
+var Cookie = {
+    create: function(name, value, days) {
+        var expires = '';
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            expires = "; expires="+date.toGMTString();
+        }
+        document.cookie = name+"="+value+expires + ";domain=.onliner." + document.location.host.split('.').pop() + "; path=/";
+    },
+
+    read: function(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    },
+
+    erase: function(name) {
+        createCookie(name,"",-1);
+    }
+};
+
+
+function addquote(post_id, username)
+{
+    var message_name = 'message_' + post_id;
+    var theSelection = '';
+    var selected_post;
+    var selected_post_id = 0;
+
+    // Get text selection - not only the post content :(
+    if (window.getSelection)
+    {
+        theSelection = window.getSelection().toString();
+        if (theSelection != '') {
+            selected_post = $(window.getSelection().focusNode).parents('.msgpost');
+        }
+    }
+    else if (document.getSelection)
+    {
+        theSelection = document.getSelection().toString();
+        if (theSelection != '') {
+            selected_post = $(document.getSelection().focusNode).parents('.msgpost');
+        }
+    }
+    else if (document.selection)
+    {
+        theSelection = document.selection.createRange().text;
+        if (theSelection != '') {
+            selected_post = $(document.selection.createRange().parentElement()).parents('.msgpost'); // IE
+        }
+
+    }
+
+    if (selected_post) {
+        selected_post_id = selected_post.attr('id').replace(/\D/g, '');
+    }
+
+    if (theSelection == '' || typeof theSelection == 'undefined' || theSelection == null || selected_post_id != post_id)
+    {
+        $.ajax({
+            url: '/quickquote.php',
+            data: {'post_id': post_id},
+            dataType: 'json',
+            async: false,
+            success: function(r) {
+                if (r != null) {
+                    theSelection = r.replace(/&quot;/ig, '"');
+                }
+            }
+        });
+    }
+
+    if (theSelection)
+    {
+        var editorId = '#postmessage';
+        var currentInput = $(editorId);
+
+        $.markItUp({target:editorId, replaceWith: '[quote="' + username + '"]' + jQuery.trim(theSelection) + "[/quote]\n"});
+
+        var endOfInput = currentInput.val().length * 2;
+        if (currentInput[0].setSelectionRange) // Fix opera focus
+        {
+            currentInput.focus();
+            currentInput[0].setSelectionRange(endOfInput, endOfInput);
+        }
+    }
+
+    return;
+}
+
+function end_for_number(num,end1,end2,end5)
+{
+    var num = parseInt(num);
+    var cases = [2, 0, 1, 1, 1, 2];
+    var titles = [end1, end2, end5];
+
+    return titles[(num % 100 > 4 && num % 100 < 20)
+        ? 2
+        : cases[Math.min(num % 10, 5)]];
+}
+
+$.post_view_count = {
+        successHandler : function(data) {
+            this.html(data + " просмотр" + end_for_number(data, "", "а", "ов"));
+            this.show();
+        },
+
+        errorHandler : function(request, status, errorText) {
+            this.hide();
+        },
+
+        performViewsCount : function(postId) {
+            var viewsBlock = $("#post_view_count_" + postId);
+            if (postId > 0) {
+                $.ajax({
+                    type: "GET",
+                    url: '/viewscount.php?postId=' + postId,
+                    dataType: "text",
+                    async: false,
+                    success: $.proxy($.post_view_count.successHandler, viewsBlock),
+                    error: $.proxy($.post_view_count.errorHandler, viewsBlock)
+                })
+            }
+        },
+
+        put : function() {
+            $(".bb_post_count").each(function(){
+                $.post_view_count.performViewsCount($(this).attr("post_id"));
+            });
+        }
+};
+
+var AdvertUp = {
+    lock:false,
+    template: '<div class="b-pop-up">' +
+                '<div class="b-pop-up-i pop-up-2">' +
+                    '{errorHead}' +
+                    '<p>{message}</p>' +
+                    '{warnings}' +
+                    '<a href="#" class="btn-1-orange action"><b><i></i>{buttonText}</b></a>' +
+                    '<a href="#" class="cancel-link">Отказаться</a>' +
+                '</div>' +
+                '<i class=""></i>' +
+            '</div>',
+    warningTemplate: '<p class="c-red">{warningMessage}</p>',
+    descriptionTemplate: '<small>{message}</small>',
+    selectedUps: [],
+    selectedUpsData: {},
+
+    init: function() {
+        $('td.lst .check-box-form-1 input').click(function() {
+            AdvertUp.removePopup();
+        });
+
+        $('.btn-up').live('click', function() {
+            if (AdvertUp.lock) {
+                return false;
+            }
+            AdvertUp.selectedUps = [this];
+
+            var adverts = {};
+            adverts[0] = [$(this).attr('topicid')];
+            AdvertUp.selectedUpsData = {
+                expectedPrice: 0,
+                topics: adverts
+            };
+
+            AdvertUp.sendUpRequest(this, AdvertUp.selectedUpsData);
+            return false;
+        });
+
+        $('.paid-up').live('click', function() {
+            if (AdvertUp.lock) {
+                return false;
+            }
+            AdvertUp.selectedUps = [this];
+
+            var adverts = {};
+            adverts[1] = [$(this).attr('topicid')];
+            AdvertUp.selectedUpsData = {
+                expectedPrice: AdvertUp.upCostByn,
+                topics: adverts
+            };
+
+            $('.b-pop-up').remove();
+
+            var upCostByn =  AdvertUp.upCostByn.moneyFormat(2, ' ', ',');
+            var template = AdvertUp.template.replace('{buttonText}', AdvertUp.ErrorMessages.BUTTON_UP)
+                .replace('{errorHead}', '')
+                .replace('{message}', AdvertUp.ErrorMessages.PAIDUP_SERVICE)
+                .replace(
+                    '{warnings}',
+                    AdvertUp.warningTemplate.replace(
+                        '{warningMessage}',
+                        AdvertUp.ErrorMessages.PRICE.replace(
+                            '{totalPrice}',
+                            upCostByn + ' р.'
+                        )
+                    )
+                );
+
+            var popup = $(template);
+            popup.find('.action').addClass('again');
+
+            AdvertUp.addPopup(this, popup);
+
+            return false;
+        });
+
+        $('.mass-up .btn-up-2-orange, .mass-up-bottom .btn-up-2-orange').click(function() {
+            if (AdvertUp.lock) {
+                return false;
+            }
+            $('.b-pop-up').remove();
+
+            AdvertUp.selectedUps = $('.check-box-form-1 input:checked').parents('.lst').find('a');
+            if (AdvertUp.selectedUps.length == 0) {
+                return false;
+            }
+
+            var expectedPrice = 0;
+            var advertCount = 0;
+            var totalAdvertsCount = 0;
+            var elExpectedPrice = 0;
+            var ifPaidUp = 0;
+            var adverts = {};
+            $.each($('.check-box-form-1 input:checked').parents('.lst').find('a'), function(i, el) {
+                totalAdvertsCount++;
+                ifPaidUp = $(el).attr('type');
+                if (!$.isArray(adverts[ifPaidUp])) {
+                    adverts[ifPaidUp] = [];
+                }
+                adverts[ifPaidUp].push($(el).attr('topicid'));
+                if (ifPaidUp > 0) {
+                    expectedPrice += AdvertUp.upCostByn;
+                    advertCount++;
+                }
+            });
+            AdvertUp.selectedUpsData = {
+                expectedPrice: expectedPrice,
+                topics: adverts
+            };
+            expectedPrice = expectedPrice.moneyFormat(2, ' ', ',');
+            if (advertCount > 0) {
+                var template = AdvertUp.template.replace('{buttonText}', 'Поднять ' + (AdvertUp.declOfNum(totalAdvertsCount, [' объявление', ' объявления', ' объявления'])))
+                    .replace('{errorHead}', '')
+                    .replace('{message}', AdvertUp.ErrorMessages.DEFAULT_PAIDUP_MESSAGE.replace('{advertCount}', advertCount + AdvertUp.declOfNum(advertCount, [' объявление', ' объявления', ' объявлений'])))
+                    .replace(
+                        '{warnings}',
+                        AdvertUp.warningTemplate.replace(
+                            '{warningMessage}',
+                            AdvertUp.ErrorMessages.TOTAL_PRICE.replace(
+                                '{totalPrice}',
+                                expectedPrice + ' р.'
+                            )
+                        )
+                    )
+
+                var popup = $(template);
+                popup.find('.action').addClass('again');
+
+                AdvertUp.addPopup(this, popup);
+            } else {
+                AdvertUp.sendUpRequest(this, AdvertUp.selectedUpsData);
+            }
+
+            return false;
+        });
+    },
+
+    addPopup: function(toEl, popup) {
+        popup.hide();
+        $(toEl).after(popup);
+        AdvertUp.fixArrow(popup);
+        AdvertUp.fixPosition(popup);
+        popup.show();
+
+        $('.b-pop-up').bind('click', function(e) {
+            if (!e) {
+                window.event.cancelBubble = true;
+            } else if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if ($(e.target).is('.cancel-link')) {
+                AdvertUp.removePopup();
+                return false;
+            }
+
+            if ($(e.target).parents('.popup_processing').length) {
+                return false;
+            }
+
+            if ($(e.target).is('.btn-1-orange.action') || $(e.target).parent().is('.btn-1-orange.action')) {
+                var button = $(e.target).is('.btn-1-orange.action') ? $(e.target) : $(e.target).parent();
+                if ($(button).hasClass('again')) {
+                    AdvertUp.sendUpRequest($('.b-pop-up').prev(), AdvertUp.selectedUpsData);
+                } else if ($(button).hasClass('location')) {
+                    AdvertUp.removePopup();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        $('html').bind('click', function(e) {
+            AdvertUp.removePopup();
+        });
+        $('html').keyup(function(e) {
+            if (e.keyCode == 27) {
+                AdvertUp.removePopup();
+            }
+        });
+    },
+
+    removePopup: function() {
+        $('.b-pop-up').remove();
+        $('html').unbind('click');
+        $('html').unbind('keyup');
+    },
+
+    sendUpRequest: function(button, data) {
+        if (this.lock) {
+            return;
+        }
+        data.t = AdvertUp.token;
+        $.ajax({
+            url: 'topics-up.php?t=' + new Date().getTime(),
+            type: 'post',
+            data: data,
+            dataType: 'json',
+            beforeSend: function() {
+                this.lock = true;
+                $('.b-pop-up .btn-1-orange').addClass('popup_processing').removeClass('again').removeClass('location');
+                $('a.cancel-link').hide();
+            },
+            error: function() {
+                $('.b-pop-up').remove();
+                this.onFatalError(button);
+            },
+            complete: function() {
+                this.lock = false;
+                $('.b-pop-up').find('.btn-1-orange.action').removeClass('popup_processing');
+            },
+            context: this,
+            success: function(response) {
+                AdvertUp.token = response.t;
+
+                if (response.success && response.status == 'ok') {
+                    $('.b-pop-up').remove();
+                    this.onSuccess(response);
+                } else if (response.status == 'redirect') {
+                    window.location.href = response.ref;
+                } else if (response.status == 'warn') {
+                    this.onError(button, response.errors)
+                    $('a.cancel-link').show();
+                } else if (response.status == 'error') {
+                    $('.b-pop-up').remove();
+                    this.onFatalError(button, response.errors.MESSAGE);
+                } else if (response.status == 't') {
+                    this.lock = false;
+                    AdvertUp.sendUpRequest(button, data);
+                } else if (response.status == 'cant_up') {
+                    $('.b-pop-up').remove();
+                } else if (response.status == 'changePrice') {
+                    $('.b-pop-up').remove();
+                    if (response.errors.WARNINGS) {
+                        var warnings = '';
+                        $(response.errors.WARNINGS).each(function(i, message) {
+                            warnings += AdvertUp.warningTemplate.replace('{warningMessage}', message);
+                        });
+                    }
+                    var template = AdvertUp.template.replace('{buttonText}', AdvertUp.ErrorMessages.ERROR_DEFAULT_BUTTON)
+                        .replace('{errorHead}', AdvertUp.ErrorMessages.NEW_PRICE)
+                        .replace('{message}', '')
+                        .replace('{warnings}', warnings);
+
+                    var popup = $(template);
+                    popup.find('.action')
+                        .addClass(response.errors.BUTTON_ACTION)
+                        .html('<b><i></i>' + response.errors.BUTTON + '</b>')
+                        .bind('click', function(e) {
+                            $.each(response.errors.CHANGED_PRICE_IDS, function(key, id) {
+                                var up = $('a[topicid="'+id+'"]');
+                                up.attr('type', 1)
+                                  .attr('class', 'btn-up-1-orange paid-up')
+                                  .html('UP+')
+                                  .parent().find('small').remove();
+                                up.after($(AdvertUp.descriptionTemplate.replace('{message}', response.nextTimeUp)).addClass('time'))
+                                  .after(AdvertUp.descriptionTemplate.replace('{message}', ' или ждите '));
+                                up.parent().find('input').removeAttr('checked');
+                            });
+                            var expectedPrice = 0;
+                            var adverts = {};
+                            var ifPaidUp = 0;
+                            $.each(AdvertUp.selectedUps, function(i, el) {
+                                expectedPrice += AdvertUp.upCostByn;
+                                ifPaidUp = $(el).attr('type') ? 1 : 0;
+                                if (!$.isArray(adverts[ifPaidUp])) {
+                                    adverts[ifPaidUp] = [];
+                                }
+                                adverts[ifPaidUp].push($(el).attr('topicid'));
+                            });
+                            AdvertUp.selectedUpsData = {
+                                expectedPrice: expectedPrice,
+                                topics: adverts,
+                                t: AdvertUp.token
+                            };
+                        });
+                    AdvertUp.addPopup(button, popup);
+                }
+            }
+        });
+    },
+
+    onSuccess: function(response) {
+        $.each(AdvertUp.selectedUps, function(i, el) {
+            el.className = 'btn-up-1-orange paid-up';
+            el.innerHTML = 'UP+';
+
+            $(el).parent().find('small').remove();
+            $(el).after($(AdvertUp.descriptionTemplate.replace('{message}', response.nextTimeUp)).addClass('time'))
+                 .after(AdvertUp.descriptionTemplate.replace('{message}', ' или ждите '));
+
+            $(el).attr('type', 1);
+
+            $(el).parent().find('input').removeAttr('checked');
+
+            var upCountContainer = $(el).parents('td').prev();
+            if (upCountContainer.hasClass('b-ba-subj-up')) {
+                upCountContainer.addClass('b-ba-subj-upped');
+                upCountContainer.html('<strong>' + response.upCount + AdvertUp.declOfNum(response.upCount, [' раз', ' раза', ' раз']) + '</strong>');
+            }
+
+            $(el).closest('.btn-up-single').removeClass('btn-up-single').addClass('btn-up-paid');
+
+            if (response.balance) {
+                $('#user-balance').html(response.balance);
+            }
+        });
+        if (AdvertUp.selectedUpsData.expectedPrice > 0) {
+            if (AdvertUp.selectedUpsData.topics[1].length > 1) {
+                ONotice.notify('Объявления подняты платно');
+            } else {
+                ONotice.notify('Объявление поднято платно');
+            }
+
+        }
+
+        AdvertUp.selectedUps = [];
+        AdvertUp.selectedUpsData = {};
+    },
+    onError: function(el, errors) {
+        var popup = $('.b-pop-up');
+
+        if (errors.WARNINGS) {
+            var warnings = '';
+            $(errors.WARNINGS).each(function(i, message) {
+                warnings += AdvertUp.warningTemplate.replace('{warningMessage}', message);
+            });
+
+            popup.find('.btn-1-orange.action').before(warnings);
+        }
+
+        popup.find('.action').addClass(errors.BUTTON_ACTION).html('<b><i></i>' + errors.BUTTON + '</b>');
+        if (errors.BUTTON_ACTION == 'location') {
+            popup.find('.action').attr('href', errors.BUTTON_LOCATION).attr('target','_blank');
+        }
+
+        popup.find('.action').blur();
+
+        AdvertUp.fixPosition(popup);
+    },
+
+    onFatalError: function(el, errorMessage) {
+        var message;
+        if (errorMessage) {
+            message = errorMessage;
+        } else {
+            message = AdvertUp.ErrorMessages.ERROR_DEFAULT_MESSAGE;
+        }
+        var template = AdvertUp.template.replace('{buttonText}', AdvertUp.ErrorMessages.ERROR_DEFAULT_BUTTON)
+            .replace('{errorHead}', AdvertUp.warningTemplate.replace('{warningMessage}', AdvertUp.ErrorMessages.ERROR))
+            .replace('{message}', message)
+            .replace('{warnings}', '');
+
+        var popup = $(template);
+
+        popup.find('.action').addClass('again');
+
+        AdvertUp.addPopup(el, popup);
+    },
+
+    declOfNum: function(number, titles)
+    {
+        cases = [2, 0, 1, 1, 1, 2];
+        return titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+    },
+
+    fixArrow: function(popup) {
+        if (popup.parent().hasClass('arrow-right')) {
+            popup.find('> i').addClass('b-pop-up__arrow-3');
+        } else if (popup.parent().hasClass('arrow-bottom')) {
+            popup.find('> i').addClass('b-pop-up__arrow-1');
+        } else if (popup.parent().hasClass('arrow-bottom-right')) {
+            popup.find('> i').addClass('b-pop-up__arrow-2');
+        } else if (popup.parent().hasClass('arrow-left')) {
+            popup.find('> i').addClass('b-pop-up__arrow-4');
+        }
+    },
+
+    fixPosition: function(popup) {
+        if (!popup.parent().hasClass('arrow-right')) {
+            var top = popup.height() + popup.find('> i').height() - parseInt(popup.parent().find('a').css('margin-top').replace('px', ''));
+            popup.css('top', -top + 'px');
+        } else  {
+            var top = popup.parent().find('a').height()/2 -2 + parseInt(popup.parent().css('padding-top').replace('px', '')) - popup.height()/2;
+            popup.css('top', top + 'px');
+        }
+
+        if (popup.parent().hasClass('arrow-left')) {
+            popup.css('left', '-4px');
+        }
+    }
+};
+
+var CloseAdvert = {
+    template: '<div class="b-pop-up">' +
+                    '<div class="b-pop-up-i pop-up-2">' +
+                        '<p class="c-red">Внимание, действие необратимо!</p>' +
+                        '<a href="#" class="btn-green confirm"><span><span>Да, неактуально</span></span></a>' +
+                        '<a href="#" class="cancel-link">Отказаться</a>' +
+                    '</div>' +
+                    '<i class=""></i>' +
+                '</div>',
+    init: function() {
+        $('.btn-close').click(function(e) {
+            $('.b-pop-up').remove();
+
+            var popup = $(CloseAdvert.template);
+            CloseAdvert.addPopup(this, popup);
+
+            return false;
+        });
+
+        $(CloseAdvert).bind('confirmed', function() {
+            document.location = $('.btn-close').attr('href');
+        });
+    },
+    addPopup: function(toEl, popup) {
+        popup.hide();
+        $(toEl).after(popup);
+        AdvertUp.fixArrow(popup);
+        CloseAdvert.fixPosition(popup);
+        popup.show();
+
+        var offsetTopPopup = popup.offset().top;
+        if (window.pageYOffset > offsetTopPopup) {
+            window.scrollTo(0, offsetTopPopup);
+        }
+
+        $('.b-pop-up').bind('click', function(e) {
+            if (!e) {
+                window.event.cancelBubble = true;
+            } else if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if ($(e.target).is('.cancel-link')) {
+                AdvertUp.removePopup();
+                return false;
+            }
+
+            if ($(e.target).parents('.confirm').length > 0) {
+                $(CloseAdvert).trigger('confirmed');
+                return false;
+            }
+
+        });
+
+        $('html').bind('click', function(e) {
+            AdvertUp.removePopup();
+        });
+        $('html').keyup(function(e) {
+            if (e.keyCode == 27) {
+                AdvertUp.removePopup();
+            }
+        });
+        $('html').keyup(function(e) {
+            if (e.keyCode == 13 && $('.b-pop-up').is(':visible')) {
+                $(CloseAdvert).trigger('confirmed');
+            }
+        });
+    },
+    fixPosition: function(popup) {
+        if (!popup.parent().hasClass('arrow-right')) {
+            var top = popup.height() + popup.find('> i').height() - parseInt(popup.parent().find('a').css('margin-top').replace('px', ''));
+            var left = popup.parent().find('a').width()/2 + (popup.parent().width() - popup.parent().find('a').width()) - popup.width()/2;
+            popup.css({'top': -top + 'px', 'left': left + 'px'});
+        } else {
+            var top = popup.parent().find('a').height()/2 -2 + parseInt(popup.parent().css('padding-top').replace('px', '')) - popup.height()/2;
+            popup.css('top', top + 'px');
+        }
+
+        if (popup.parent().hasClass('arrow-left')) {
+            popup.css('left', '-4px');
+        }
+    }
+};
+
+var userCardsData = {
+    cardsData: {},
+    requestTimeout: 10000,
+    requestLockByUserId: {},
+
+    selectors: {
+        userCards: function (userId) {
+            return ('.b-mta-card[data-user-id="%userId%"]')
+                .replace(/%userId%/i, userId);
+        },
+        userCardsFields: {
+            devices: '.userCardDevices',
+            devicesSelectors: {
+                textContainer: 'span'
+            },
+            birthday: '.userCardBirthday',
+            birthdaySelectors: {
+                textContainer: 'span'
+            },
+            city: '.userCardCity',
+            citySelectors: {
+                textContainer: 'span'
+            },
+            onlineStatus: '.user-status'
+        }
+    },
+
+    templates: {
+        onlineStatus: '<span class="c-gr">онлайн</span>'
+    },
+
+    doUpdateCards: function (data) {
+        var cards = $(userCardsData.selectors.userCards(data.id));
+
+        cards.each(function (i, element) {
+            var devices = $(userCardsData.selectors.userCardsFields.devices, element);
+            var birthday = $(userCardsData.selectors.userCardsFields.birthday, element);
+            var city = $(userCardsData.selectors.userCardsFields.city, element);
+
+            if (data['devices']) {
+                $(userCardsData.selectors.userCardsFields.devicesSelectors.textContainer, devices)
+                    .html(data['devices']);
+                devices.show();
+            } else {
+                devices.hide();
+            }
+
+            if (data['birthday']) {
+                $(userCardsData.selectors.userCardsFields.birthdaySelectors.textContainer, birthday)
+                    .html(data['birthday']);
+                birthday.show();
+            } else {
+                birthday.hide();
+            }
+
+            if (data['city']) {
+                $(userCardsData.selectors.userCardsFields.citySelectors.textContainer, city)
+                    .html(data['city']);
+                city.show();
+            } else {
+                city.hide();
+            }
+        });
+
+        if (data['isOnline']) {
+            $(userCardsData.selectors.userCardsFields.onlineStatus, cards)
+                .html(userCardsData.templates.onlineStatus);
+        }
+    },
+
+    updateCards: function (userId) {
+        if (userId in this.cardsData) {
+            this.doUpdateCards(this.cardsData[userId]);
+        } else {
+            this.getCardData(userId, this.doUpdateCards);
+        }
+    },
+
+    getCardData: function (userId, handler) {
+        if (this.requestLockByUserId[userId]) {
+            return;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/sdapi/api/user/carddata/' + userId + '?' + new Date().getTime(),
+            dataType: 'json',
+            context: this,
+            timeout: this.requestTimeout,
+            beforeSend: function () {
+                this.requestLockByUserId[userId] = true;
+            },
+            complete: function () {
+                this.requestLockByUserId[userId] = false;
+            },
+            success: function (r, textStatus, jqXHR) {
+                if (r != null && r.id == userId) {
+                    this.cardsData[r.id] = r;
+                    handler(r);
+                }
+            }
+        });
+    },
+
+    checkOnlineStatuses: function (usersIds, handler) {
+        $.ajax({
+            type: 'POST',
+            url: '/sdapi/api/user/usersonline?' + new Date().getTime(),
+            data: {
+                usersIds: usersIds
+            },
+            dataType: 'json',
+            success: function (r, textStatus, jqXHR) {
+                if (r != null && r.result == 'ok') {
+                    handler(r);
+                }
+            }
+        });
+    }
+};
+
+Number.prototype.moneyFormat = function(decimals, delimiter, precision) {
+    var delimiter = delimiter || ' ';
+    var precision = precision || ',';
+
+    var nstr = (Math.round((this.toFixed(decimals + 1) * Math.pow(10, decimals)))
+        / Math.pow(10, decimals)).toFixed(decimals) + '';
+    var x = nstr.split('.');
+    var integer = x[0];
+    if (Math.abs(integer) > 9999) {
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(integer)) {
+            integer = integer.replace(rgx, '$1' + delimiter + '$2');
+        }
+    }
+    var rest = x[1];
+    return decimals > 0
+        ? integer + precision + rest
+        : integer;
+};

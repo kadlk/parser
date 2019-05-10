@@ -1,0 +1,285 @@
+/* Navigation + tiser
+*******************************************************************************************************************************/
+
+/*Top nav list*/
+.fleamarket__1.onav__subnav{padding:0 10px 0 0;margin:-20px -20px 20px;height:auto;position:relative;zoom:1;background:#e5e4de;background:-moz-linear-gradient(top, rgba(248,248,243,1) 0%, rgba(250,249,245,1) 18%, rgba(248,246,242,1) 38%, rgba(239,238,232,1) 67%, rgba(235,236,230,1) 79%, rgba(236,235,229,1) 92%, rgba(229,228,222,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(248,248,243,1)), color-stop(18%,rgba(250,249,245,1)), color-stop(38%,rgba(248,246,242,1)), color-stop(67%,rgba(239,238,232,1)), color-stop(79%,rgba(235,236,230,1)), color-stop(92%,rgba(236,235,229,1)), color-stop(100%,rgba(229,228,222,1)));background:-webkit-linear-gradient(top, rgba(248,248,243,1) 0%,rgba(250,249,245,1) 18%,rgba(248,246,242,1) 38%,rgba(239,238,232,1) 67%,rgba(235,236,230,1) 79%,rgba(236,235,229,1) 92%,rgba(229,228,222,1) 100%);background:-o-linear-gradient(top, rgba(248,248,243,1) 0%,rgba(250,249,245,1) 18%,rgba(248,246,242,1) 38%,rgba(239,238,232,1) 67%,rgba(235,236,230,1) 79%,rgba(236,235,229,1) 92%,rgba(229,228,222,1) 100%);background:linear-gradient(top, rgba(248,248,243,1) 0%,rgba(250,249,245,1) 18%,rgba(248,246,242,1) 38%,rgba(239,238,232,1) 67%,rgba(235,236,230,1) 79%,rgba(236,235,229,1) 92%,rgba(229,228,222,1) 100%);font:13px/24px Arial,Helvetica}
+.fleamarket__1.onav__subnav:after{height:0;visibility:hidden;display:block;font-size:0;content:"\0020";clear:both}
+.no-cssgradients .fleamarket__1.onav__subnav{background:#e5e4de url(../img/regionality/bg_horisontal.png) repeat-x 0 0}
+
+	.fleamarket__1.onav__subnav li{height:25px;padding:8px 10px 7px;float:left;position:relative}
+    .fleamarket__1.onav__subnav li.last-left{margin-right: -100%;}
+    .fleamarket__1.onav__subnav li.mnfn_flr {float: right;}
+
+@media only screen and (max-width: 1065px) {
+    .fleamarket__1.onav__subnav li.for-big-resolutions {
+        display: none;
+    }
+}
+		.fleamarket__1.onav__subnav a{text-decoration:none}
+		.fleamarket__1.onav__subnav a:hover{text-decoration:underline}
+			.fleamarket__1.onav__subnav ins{height:25px;padding:0 10px;display:-moz-inline-stack;display:inline-block;position:relative;text-decoration:none}
+
+/*Region select */
+	.fleamarket__1.onav__subnav .region-select{padding:8px 20px 7px 55px;margin-right:0;border-right:1px solid #c7c8c7;background:#e5e4de;background:-moz-linear-gradient(top, rgba(238,238,233,1) 0%, rgba(242,241,237,1) 18%, rgba(238,236,233,1) 38%, rgba(235,234,230,1) 41%, rgba(233,232,227,1) 49%, rgba(228,227,221,1) 51%, rgba(226,226,219,1) 54%, rgba(220,219,214,1) 67%, rgba(215,214,208,1) 92%, rgba(202,201,196,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(238,238,233,1)), color-stop(18%,rgba(242,241,237,1)), color-stop(38%,rgba(238,236,233,1)), color-stop(41%,rgba(235,234,230,1)), color-stop(49%,rgba(233,232,227,1)), color-stop(51%,rgba(228,227,221,1)), color-stop(54%,rgba(226,226,219,1)), color-stop(67%,rgba(220,219,214,1)), color-stop(92%,rgba(215,214,208,1)), color-stop(100%,rgba(202,201,196,1)));background:-webkit-linear-gradient(top, rgba(238,238,233,1) 0%,rgba(242,241,237,1) 18%,rgba(238,236,233,1) 38%,rgba(235,234,230,1) 41%,rgba(233,232,227,1) 49%,rgba(228,227,221,1) 51%,rgba(226,226,219,1) 54%,rgba(220,219,214,1) 67%,rgba(215,214,208,1) 92%,rgba(202,201,196,1) 100%);background:-o-linear-gradient(top, rgba(238,238,233,1) 0%,rgba(242,241,237,1) 18%,rgba(238,236,233,1) 38%,rgba(235,234,230,1) 41%,rgba(233,232,227,1) 49%,rgba(228,227,221,1) 51%,rgba(226,226,219,1) 54%,rgba(220,219,214,1) 67%,rgba(215,214,208,1) 92%,rgba(202,201,196,1) 100%);background:linear-gradient(top, rgba(238,238,233,1) 0%,rgba(242,241,237,1) 18%,rgba(238,236,233,1) 38%,rgba(235,234,230,1) 41%,rgba(233,232,227,1) 49%,rgba(228,227,221,1) 51%,rgba(226,226,219,1) 54%,rgba(220,219,214,1) 67%,rgba(215,214,208,1) 92%,rgba(202,201,196,1) 100%);color:#4c4c4c}
+	.no-cssgradients .fleamarket__1.onav__subnav .region-select{background:#e5e4de url(../img/regionality/bg_horisontal.png) repeat-x 0 -80px}
+
+/*Pseudo link*/
+			.fleamarket__1.onav__subnav .region-select .pseudo-link{border-bottom:1px dotted #004d99;font-weight:bold}
+			.fleamarket__1.onav__subnav .region-select .pseudo-link:hover{border-bottom-color:#06c;text-decoration:none}
+
+/*Arrow down*/
+				.fleamarket__1 .onav__subnav__ar{position: absolute;top: 12px;right:0;width:5px;height:3px;background:url(../img/onliner-ico.png);-moz-opacity:0.7;opacity:0.7;filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=70);-ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)'}
+
+/*Tieser*/
+		.fleamarket__1 .onav__new_text-2{position:absolute;z-index:100;left:150px;top:36px;margin:0 0 0 -13px;padding:2px 5px;font:11px/12px Arial,Helvetica,sans-serif;background:#ff3600;text-decoration:none;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius:2px;color:#fff;white-space: nowrap}
+		.fleamarket__1 .onav__new_text-2:hover{color:#fff;text-decoration:none}
+		.fleamarket__1 .onav__new_text_arrow{position:absolute;display:block;top: -4px;left:4px;width:3px;height:4px;overflow:hidden;background:url(../img/regionality/onav__text_arrow_2.gif) 0 0 no-repeat}
+
+/*Active selection*/
+		.fleamarket__1.onav__subnav a .active,
+		.fleamarket__1.onav__subnav a:hover .active{color:#fff;text-decoration:none}
+
+			.fleamarket__1.onav__subnav .active{color:#fff;background:#6a6a68; background:-moz-linear-gradient(top, rgba(137,136,135,1) 0%, rgba(107,106,104,1) 100%);background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,rgba(137,136,135,1)),color-stop(100%,rgba(107,106,104,1)));background:-webkit-linear-gradient(top, rgba(137,136,135,1) 0%,rgba(107,106,104,1) 100%);background:-o-linear-gradient(top, rgba(137,136,135,1) 0%,rgba(107,106,104,1) 100%);background:linear-gradient(top, rgba(137,136,135,1) 0%,rgba(107,106,104,1) 100%)}
+			.no-cssgradients .fleamarket__1.onav__subnav .active{color:#fff;background:#6a6a68 url(../img/regionality/bg_horisontal.png) repeat-x 0 -161px}
+/* Navigation + tiser
+*******************************************************************************************************************************/
+
+.project-navigation ins{text-decoration:none}
+.project-navigation ins a{font-weight:400}
+.project-navigation .region-select{position:relative}
+.project-navigation .region-select .pseudo-link{text-decoration:none}
+.project-navigation .region-select .pseudo-link span{border-bottom:1px dotted}
+.project-navigation .onav__subnav__ar{display:inline-block;vertical-align:middle;width:5px;height:3px;margin-left:5px;background:url(../img/onliner-ico.png);-moz-opacity:0.7;opacity:0.7;filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=70);-ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)'}
+
+/* Regions select dropdown
+*******************************************************************************************************************************/
+
+.b-regions-dropdown{min-width:180px;padding:10px 0 10px;display:none;position:absolute;top:100%;left:calc(50% - 63px);background:#fff;-webkit-box-shadow:0px 2px 5px 0px rgba(0,0,0,0.50);-moz-box-shadow:0px 2px 5px 0px rgba(0,0,0,0.50);box-shadow:0px 2px 5px 0px rgba(0,0,0,0.50);z-index:100;font: 13px 'Open Sans', Arial, Helvetica, Verdana, sans-serif;color:#000;z-index:1099}
+.no-boxshadow .b-regions-dropdown{border:1px solid #ccc}
+
+	.b-regions-dropdown dl{}
+		.b-regions-dropdown dt{padding: 7px 20px 2px;font-weight:600;color:#333}
+			.b-regions-dropdown__top{margin-bottom:8px;padding:0 0 13px;border-bottom:1px solid #ccc}
+			.b-regions-dropdown a{display:block}
+			.b-regions-dropdown a:hover{background:#eff4fd;text-decoration:none}
+				.b-regions-dropdown a:hover span{background:#eff4fd}
+					.b-regions-dropdown a:hover b{text-decoration:underline}
+					.b-regions-dropdown a:hover small{text-decoration:none}
+				.b-regions-dropdown span{padding:3px 20px;display:block}
+				.b-regions-dropdown b{font-weight:400}
+						.b-regions-dropdown small{margin:0 0 0 5px;font-size:inherit;color:#999}
+						.b-regions-dropdown small a{display:inline;color:inherit}
+
+/*Dropdown arrow*/
+	.b-regions-dropdown__arrow{margin-left:-7px;width:13px;height:9px;background:url(../img/regionality/b_pop_up_arrow_up.png) no-repeat 0 0;position:absolute;top:-8px;left:50%}
+/* Regions select dropdown
+*******************************************************************************************************************************/
+
+
+
+/* Forum Title with search + add advert button
+*******************************************************************************************************************************/
+/*Container*/
+.fleamarket__1.b-mnforum-header{padding:0 0 0 43px;margin:0 0 20px}
+.fleamarket__1.b-mnforum-header:after{content:"\0020";display:block;font-size:1px;height:0;clear:both;visibility:hidden}
+
+/*Header H1*/
+	.fleamarket__1 .m-title-i{float:left;padding:0 55px 0 0; overflow: hidden;}
+		.fleamarket__1.b-mnforum-header .m-title{font:bold 34px/1.4 Arial,Helvetica,sans-serif;padding-bottom:0;}
+		.fleamarket__1.b-mnforum-header .m-title .m-title-i.title{font:bold 24px/1.25 Arial,Helvetica,sans-serif;}
+			.fleamarket__1.b-mnforum-header .m-title a{color:#000;text-decoration:none}
+			.fleamarket__1.b-mnforum-header .m-title .gray-text{color:#777}
+
+/*Path*/
+	.fleamarket__1 .b-path{color:#333;font:11px/18px Verdana, Tahoma, sans-serif;padding:0 0 12px}
+
+/*Moderators*/
+	.fleamarket__1 .b-infotopic{position:relative;float:right;font:13px/18px Arial,Helvetica;margin-top:-63px;padding-bottom:14px;font:11px/18px Verdana, Tahoma, sans-serif;color:#808080}
+
+/*Fleamarket search (main)*/
+	#fleaMarketSearch{width:56%;margin:4px -15% 0 0;position:relative;display:inline-block;text-align:left;*float:left}
+		#fleaMarketSearch .b-flea-market-search-i{padding:1px;margin:0 90px 0 0;border:3px solid #d9ecff;background:#bcd9f3;position: relative;zoom:1;}
+		#fleaMarketSearch .b-flea-market-search-i:after{height:0;visibility:hidden;display:block;font-size:0;content:"\0020";clear:both}
+
+			.fleamarket__1 .b-mnforum-header-i .b-searchsubj{width:100%;margin:0;border:0;position:relative;z-index:3}
+				.fleamarket__1 .b-mnforum-header-i .onlsearch__ip{color:#4c4c4c}
+				.fleamarket__1 .b-mnforum-header-i .b-searchsubj .i-p{height:23px;width:90%;padding:5px 0 5px 10px;margin:0 -100px 0 0;border:0;outline:none;float:left;color:#4c4c4c;font:15px Arial, Helvetica,sans-serif;line-height:23px}
+
+				.fleamarket__1 .b-mnforum-header-i .search_example{color:#4c4c4c}
+					.fleamarket__1 .b-mnforum-header-i .btn{height:33px;float:right;border:0;padding:0 20px;margin:0;background:#f8f8f8;background:-moz-linear-gradient(top, rgba(248,248,248,1) 0%, rgba(246,246,246,1) 28%, rgba(231,231,231,1) 78%, rgba(230,229,230,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(248,248,248,1)), color-stop(28%,rgba(246,246,246,1)), color-stop(78%,rgba(231,231,231,1)), color-stop(100%,rgba(230,229,230,1)));background:-webkit-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);background:-o-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);background:linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);cursor:pointer;color:#181818;font: bold 15px Arial,Helvetica,sans-serif}
+					.no-cssgradients .fleamarket__1 .b-mnforum-header-i .btn{background:#e5e6e5 url(../img/regionality/bg_horisontal.png) repeat-x 0 -226px}
+					.fleamarket__1 .b-mnforum-header-i .btn:active{background:#e6e5e6;background:-moz-linear-gradient(top, rgba(230,229,230,1) 0%, rgba(231,231,231,1) 22%, rgba(246,246,246,1) 72%, rgba(248,248,248,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,229,230,1)), color-stop(22%,rgba(231,231,231,1)), color-stop(72%,rgba(246,246,246,1)), color-stop(100%,rgba(248,248,248,1)));background:-webkit-linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%);background:-o-linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%);background:linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%)}
+					.no-cssgradients .fleamarket__1 .b-mnforum-header-i .btn:active{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -299px}
+
+/*Add button (green)*/
+	.b-fleamarket-button-i{padding:0 0 0 70px}
+	.b-fleamarket-button-i-2{margin:0 0 5px 0}
+		.b-fleamarket-button{width:23%;float:right;margin-right: 10px;}
+    .m-title .b-fleamarket-button{margin: 0;}
+		.b-btn-fleamarket__1{padding:2px;background:#77ac00;background:-moz-linear-gradient(top, rgba(119,172,0,1) 0%, rgba(100,151,0,1) 26%, rgba(49,97,0,1) 72%, rgba(27,73,0,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(119,172,0,1)), color-stop(26%,rgba(100,151,0,1)), color-stop(72%,rgba(49,97,0,1)), color-stop(100%,rgba(27,73,0,1)));background:-webkit-linear-gradient(top, rgba(119,172,0,1) 0%,rgba(100,151,0,1) 26%,rgba(49,97,0,1) 72%,rgba(27,73,0,1) 100%);background:-o-linear-gradient(top, rgba(119,172,0,1) 0%,rgba(100,151,0,1) 26%,rgba(49,97,0,1) 72%,rgba(27,73,0,1) 100%);background:linear-gradient(top, rgba(119,172,0,1) 0%,rgba(100,151,0,1) 26%,rgba(49,97,0,1) 72%,rgba(27,73,0,1) 100%);display:block}
+		.no-cssgradients .b-btn-fleamarket__1{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -498px}
+		.b-btn-fleamarket__1:hover{text-decoration:none}
+		.b-btn-fleamarket__1::-moz-focus-inner{padding:0;border:none;margin:0}
+
+/*Add button's inner span */
+			.b-btn-fleamarket__1 span{padding:7px 0;background:#8ac700;background:-moz-linear-gradient(top, rgba(138,199,0,1) 0%, rgba(122,188,0,1) 16%, rgba(68,152,0,1) 56%, rgba(50,140,0,1) 74%, rgba(48,139,0,1) 86%, rgba(48,146,0,1) 93%, rgba(56,154,0,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(138,199,0,1)), color-stop(16%,rgba(122,188,0,1)), color-stop(56%,rgba(68,152,0,1)), color-stop(74%,rgba(50,140,0,1)), color-stop(86%,rgba(48,139,0,1)), color-stop(93%,rgba(48,146,0,1)), color-stop(100%,rgba(56,154,0,1)));background:-webkit-linear-gradient(top, rgba(138,199,0,1) 0%,rgba(122,188,0,1) 16%,rgba(68,152,0,1) 56%,rgba(50,140,0,1) 74%,rgba(48,139,0,1) 86%,rgba(48,146,0,1) 93%,rgba(56,154,0,1) 100%);background:-o-linear-gradient(top, rgba(138,199,0,1) 0%,rgba(122,188,0,1) 16%,rgba(68,152,0,1) 56%,rgba(50,140,0,1) 74%,rgba(48,139,0,1) 86%,rgba(48,146,0,1) 93%,rgba(56,154,0,1) 100%);background:linear-gradient(top, rgba(138,199,0,1) 0%,rgba(122,188,0,1) 16%,rgba(68,152,0,1) 56%,rgba(50,140,0,1) 74%,rgba(48,139,0,1) 86%,rgba(48,146,0,1) 93%,rgba(56,154,0,1) 100%);display:block;text-align:center;font:15px Arial, Helvetica,sans-serif;color:#fff;line-height:1}
+			.no-cssgradients .b-btn-fleamarket__1 span{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -586px}
+
+			.b-btn-fleamarket__1:hover span{background:#8ac700;background:-moz-linear-gradient(top, #8ac700 0%, #4ba700 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#8ac700), color-stop(100%,#4ba700));background:-webkit-linear-gradient(top, #8ac700 0%,#4ba700 100%);background:-o-linear-gradient(top, #8ac700 0%,#4ba700 100%);background:linear-gradient(top, #8ac700 0%,#4ba700 100%)}
+      .no-cssgradients .b-btn-fleamarket__1:hover span,
+      .no-cssgradients .b-btn-fleamarket__1 span:hover{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -670px}
+
+			.b-btn-fleamarket__1:active span{background:#217100;background:-moz-linear-gradient(top, #217100 0%, #5ea300 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#217100), color-stop(100%,#5ea300));background:-webkit-linear-gradient(top, #217100 0%,#5ea300 100%);background:-o-linear-gradient(top, #217100 0%,#5ea300 100%);background:linear-gradient(top, #217100 0%,#5ea300 100%)}
+			.no-cssgradients .b-btn-fleamarket__1 span:active{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -754px}
+/* Forum Title with search + add advert button
+*******************************************************************************************************************************/
+
+
+
+/* Fleamarket section search
+*******************************************************************************************************************************/
+
+/*Search string & button*/
+	.fleamarket__1.b-mnforum-search{margin:0 0 1px}
+		.fleamarket__1.b-mnforum-search .b-searchsubj-form{padding:11px;background:#e4f2ff}
+		.fleamarket__1.b-mnforum-search .b-searchsubj-form:after{content:"\0020";display:block;font-size:1px;height:0;clear:both;visibility:hidden}
+
+/*Form*/
+			.fleamarket__1.b-mnforum-search .b-searchsubj-incat{padding:0;background:inherit;position:relative;top:0;left:0;overflow:hidden;zoom:1}
+					.fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj{margin:0 0 0 0;width:auto;border:0!important;position: static;}
+					.fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj:after{content:"\0020";display: block;height:0;visibility:hidden;clear:both;border:0!important;}
+
+/*Input*/
+						.fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj .i-p{height:25px;width:100%;padding:0 80px 0 10px;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;border:1px solid #bcd9f3;outline:none;font:15px Arial,Helvetica,sans-serif;color:#000}
+              .ie7 .fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj .i-p,
+              .ie8 .fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj .i-p{padding:2px 0 0 10px;}
+/*Button*/
+						.fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj .btn{height:23px;position:absolute;top:1px;right:1px;border:0;padding:0 20px;margin:0;background:#f8f8f8;background:-moz-linear-gradient(top, rgba(248,248,248,1) 0%, rgba(246,246,246,1) 28%, rgba(231,231,231,1) 78%, rgba(230,229,230,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(248,248,248,1)), color-stop(28%,rgba(246,246,246,1)), color-stop(78%,rgba(231,231,231,1)), color-stop(100%,rgba(230,229,230,1)));background:-webkit-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);background:-o-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);background:linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);cursor:pointer;color:#181818;font: 11px Arial,Helvetica,sans-serif}
+						.no-cssgradients .fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj .btn{background:#e5e6e5 url(../img/regionality/bg_horisontal.png) repeat-x 0 -372px}
+						.fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj .btn:active{background:#e6e5e6;background:-moz-linear-gradient(top, rgba(230,229,230,1) 0%, rgba(231,231,231,1) 22%, rgba(246,246,246,1) 72%, rgba(248,248,248,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,229,230,1)), color-stop(22%,rgba(231,231,231,1)), color-stop(72%,rgba(246,246,246,1)), color-stop(100%,rgba(248,248,248,1)));background:-webkit-linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%);background:-o-linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%);background:linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%)}
+						.no-cssgradients .fleamarket__1.b-mnforum-search .b-searchsubj-incat .b-searchsubj .btn:active{background:#e5e6e5 url(../img/regionality/bg_horisontal.png) repeat-x 0 -435px}
+
+/*Option checkboxes*/
+			.fleamarket__1.b-mnforum-search .b-searchsubj-options-i{margin-top:5px;overflow:hidden;position:relative;white-space:nowrap;}
+				.fleamarket__1.b-mnforum-search #topicRegion,
+				.fleamarket__1.b-mnforum-search #topicTitle,
+				.fleamarket__1.b-mnforum-search #topicsWithDelivery{margin:1px 10px 0 0;float:left}
+				.fleamarket__1.b-mnforum-search #topicRegionLabel,
+				.fleamarket__1.b-mnforum-search #topicTitleLabel,
+				.fleamarket__1.b-mnforum-search #topicsWithDeliveryLabel{float:left;font-size:12px;margin:2px 20px 0 0;-moz-opacity:0.7;opacity:0.7;filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=70);-ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)';font:11px Arial,Helvetica,sans-serif;cursor:pointer}
+        .ie8 .fleamarket__1.b-mnforum-search .b-searchsubj-options-i{margin:0 0 0 -310px}
+        .ie8 .fleamarket__1.b-mnforum-search #topicRegion,
+        .ie8 .fleamarket__1.b-mnforum-search #topicTitle{margin:-1px 10px 0 0}
+
+/*Search region title*/
+		.fleamarket__1 .b-search-region{margin:10px 0 0;font:bold 15px Arial,Helvetica,sans-serif;color:#808080; clear:both;}
+
+/*Button's container*/
+	.fleamarket__1 .b-mnforum-button{width:23%;float:right}
+/* Fleamarket section search
+*******************************************************************************************************************************/
+
+
+
+/* Pagination + adverts counters
+*******************************************************************************************************************************/
+
+.fleamarket__1 .b-pages-i{padding:5px 12px}
+	.fleamarket__1.b-pages{margin:0 0 10px;background:#e3e8ed;background:-moz-linear-gradient(top, #e3e8ed 0%, #dfe6eb 26%, #d2dce2 71%, #d0dae2 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#e3e8ed), color-stop(26%,#dfe6eb), color-stop(71%,#d2dce2), color-stop(100%,#d0dae2));background:-webkit-linear-gradient(top, #e3e8ed 0%,#dfe6eb 26%,#d2dce2 71%,#d0dae2 100%);background:-o-linear-gradient(top, #e3e8ed 0%,#dfe6eb 26%,#d2dce2 71%,#d0dae2 100%);background:linear-gradient(top, #e3e8ed 0%,#dfe6eb 26%,#d2dce2 71%,#d0dae2 100%);font-size:11px;line-height:21px;text-align:center}
+	.no-cssgradients .fleamarket__1.b-pages{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -838px}
+	.fleamarket__1.b-pages:after{content:"\0020";display:block;height:0;visibility:hidden;clear:both}
+
+/*Page counter*/
+		.fleamarket__1 .b-pages-count{margin:6px 0 0;float:left;font:13px Arial,Helvetica,sans-serif}
+
+/*Fast nav*/
+		.fleamarket__1 .pages-fastnav{}
+			.fleamarket__1 .pages-fastnav li{padding:0 !important;float:left;background:#fffefe;background:-moz-linear-gradient(top, #fffefe 0%, #fbfbfa 40%, #f4f3f2 55%, #eae9e7 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#fffefe), color-stop(40%,#fbfbfa), color-stop(55%,#f4f3f2), color-stop(100%,#eae9e7));background:-webkit-linear-gradient(top, #fffefe 0%,#fbfbfa 40%,#f4f3f2 55%,#eae9e7 100%);background:-o-linear-gradient(top, #fffefe 0%,#fbfbfa 40%,#f4f3f2 55%,#eae9e7 100%);background:linear-gradient(top, #fffefe 0%,#fbfbfa 40%,#f4f3f2 55%,#eae9e7 100%)}
+			.no-cssgradients .fleamarket__1 .pages-fastnav li{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -915px}
+/* Pagination + adverts counters
+*******************************************************************************************************************************/
+
+
+
+/* Sorting panel
+*******************************************************************************************************************************/
+
+.fleamarket__1.ba-tbl-list {
+	clear: both;
+	font: 62.5% Verdana, Tahoma, Geneva;
+	color: #000;
+}
+
+	.fleamarket__1 .ba-tbl-list__table{width:100%;background-color:#f5f5f5;margin-bottom:10px}
+		.fleamarket__1 .ba-tbl-list__table tr.sorting__1{border-right: 1px solid #c4c4c4}
+			.fleamarket__1 .ba-tbl-list__table th{font-size:10px;line-height:12px;padding:0;border:0;background:#e6e6e6;background:-moz-linear-gradient(top, rgba(230,230,230,1) 0%, rgba(247,247,247,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,230,230,1)), color-stop(100%,rgba(247,247,247,1)));background:-webkit-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(247,247,247,1) 100%);background:-o-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(247,247,247,1) 100%);background:linear-gradient(top, rgba(230,230,230,1) 0%,rgba(247,247,247,1) 100%);font-family:Arial,Helvetica,sans-serif}
+			.no-cssgradients .fleamarket__1 .ba-tbl-list__table th{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -987px}
+
+				.fleamarket__1 .ba-tbl-list__table .a-r{text-align:right}
+				.fleamarket__1 .ba-tbl-list__table .a-c{text-align:center}
+				.fleamarket__1 .ba-tbl-list__table .a-c a{padding:6px 10px;display:block;background: none;}
+				.fleamarket__1 .ba-tbl-list__table td{border-style:solid;border-color:#e6e6e6;border-top-color:#ccc;line-height:inherit;}
+
+				.fleamarket__1.b-ba-tabs{float:left;font:13px Arial,Helvetica,sans-serif;margin-right:7px;text-transform:none;}
+					.fleamarket__1.b-ba-tabs li{display:inline}
+					.fleamarket__1.b-ba-tabs a, .fleamarket__1.b-ba-tabs a:visited{
+						color:#004D99;float:left;padding:6px 10px;margin:0;border-top:0;border-right:1px solid #c4c4c4;border-left:1px solid #fff;border-bottom-width:0;background:#f7f7f7;background:-webkit-gradient(linear, left top, left bottom, color-stop(0, #f7f7f7), color-stop(1, #e6e6e6));background:-ms-linear-gradient(top, #f7f7f7, #e6e6e6);background:-moz-linear-gradient(center top, #f7f7f7 0%, #e6e6e6 100%);background:-o-linear-gradient(top, #f7f7f7, #e6e6e6)}
+					.no-cssgradients .fleamarket__1.b-ba-tabs a{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -1052px}
+
+            .fleamarket__1 .th-sort-tabs td {font: 13px Arial,Helvetica,sans-serif;padding: 0 10px;white-space: nowrap;}
+            .fleamarket__1 .th-sort-tabs .a-c {border-bottom-width: 0;border-left: 1px solid #FFFFFF;border-top-width: 0;background: none;}
+						.fleamarket__1.b-ba-tabs .selected,
+						.fleamarket__1.b-ba-tabs a.selected:hover,
+            .fleamarket__1.b-ba-tabs a.selected:visited,
+						.fleamarket__1 .th-sort-tabs .selected{color:#fff;border-width:0;text-decoration:none;background:#515151;background:-webkit-gradient(linear,left top,left bottom,color-stop(0, #515151),color-stop(1, #909191));background:-moz-linear-gradient(center top,#515151 0%,#909191 100%);background:-o-linear-gradient(top, #515151, #909191)}
+						.no-cssgradients .fleamarket__1 .th-sort-tabs .selected{background:url(../img/regionality/bg_horisontal.png) repeat-x 0 -1123px}
+/* Sorting panel
+*******************************************************************************************************************************/
+
+
+
+/* Topic messages search
+*******************************************************************************************************************************/
+
+/*Search form*/
+.fleamarket__1.b-searchsubj-incat{position:relative;top:-2px;left:0;overflow:hidden;float:none;background-color:#e4f2ff;padding:2px;zoom:1}
+	.fleamarket__1.b-searchsubj-incat .b-searchsubj{float:none;width:auto;background-color:#fff;margin:0;padding:0;border:none;}
+	.fleamarket__1.b-searchsubj-incat .b-searchsubj:after{content:"\0020";display:block;height:0;visibility:hidden;clear:both}
+		.fleamarket__1.b-searchsubj-incat .b-searchsubj .i-p{color:#000;width:98%}
+		.fleamarket__1.b-searchsubj-incat .b-searchsubj .btn{position:absolute;right:0;top:0}
+
+/*Search button (small)*/
+	.btn.new__1{height:23px;border:0;padding:0 20px;margin:0;background:#f8f8f8;background:-moz-linear-gradient(top, rgba(248,248,248,1) 0%, rgba(246,246,246,1) 28%, rgba(231,231,231,1) 78%, rgba(230,229,230,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(248,248,248,1)), color-stop(28%,rgba(246,246,246,1)), color-stop(78%,rgba(231,231,231,1)), color-stop(100%,rgba(230,229,230,1)));background:-webkit-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);background:-o-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);background:linear-gradient(top, rgba(248,248,248,1) 0%,rgba(246,246,246,1) 28%,rgba(231,231,231,1) 78%,rgba(230,229,230,1) 100%);cursor:pointer;color:#181818;font: 11px Arial,Helvetica,sans-serif}
+	.no-cssgradients .btn.new__1{background:#e5e6e5 url(../img/regionality/bg_horisontal.png) repeat-x 0 -372px}
+	.btn.new__1:active,
+	.btn.new__1:focus{background:#e6e5e6;background:-moz-linear-gradient(top, rgba(230,229,230,1) 0%, rgba(231,231,231,1) 22%, rgba(246,246,246,1) 72%, rgba(248,248,248,1) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,229,230,1)), color-stop(22%,rgba(231,231,231,1)), color-stop(72%,rgba(246,246,246,1)), color-stop(100%,rgba(248,248,248,1)));background:-webkit-linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%);background:-o-linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%);background:linear-gradient(top, rgba(230,229,230,1) 0%,rgba(231,231,231,1) 22%,rgba(246,246,246,1) 72%,rgba(248,248,248,1) 100%)}
+	.no-cssgradients .btn.new__1:active,
+	.no-cssgradients .btn.new__1:focus{background:#e5e6e5 url(../img/regionality/bg_horisontal.png) repeat-x 0 -435px}
+/* Topic messages search
+*******************************************************************************************************************************/
+
+
+
+/* Advert description + region
+*******************************************************************************************************************************/
+	.fast-desc-region{margin:-5px 0 5px 10px;color:#000}
+/* Advert description + region
+*******************************************************************************************************************************/
+
+
+
+/*Not found
+*******************************************************************************************************************************/
+	.fleamarket__1.search-not-found{font:24px Arial,Helvetica,sans-serif;margin-left:40px;}
+
+	.fleamarket__1.search-recommendations{font:15px Arial,Helvetica,sans-serif}
+		.fleamarket__1.search-recommendations em{font-size:20px;color:#808080;margin-left:40px;}
+		  .fleamarket__1.search-recommendations ul{margin:40px 0;padding:0 0 0 2em}
+			.fleamarket__1.search-recommendations li{margin:6px 0;padding:0 0 0 20px;list-style-type:none;background:url(../img/regionality/mdash.gif) no-repeat 0 0.6em}
+/*//Not found
+*******************************************************************************************************************************/
+
+
+/*Default
+********************************************************/
+.btn::-moz-focus-inner{border:0;padding:0}

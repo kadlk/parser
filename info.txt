@@ -1,0 +1,41 @@
+<tr>
+            <td class="frst ph colspan" colspan="2">
+                <table width="100%">
+                    <tbody><tr>
+                        <td class="ph">
+                            <div class="ph-i">
+                                <span class="img-va"><a href="https://baraholka.onliner.by/viewtopic.php?t=22885153"><img src="./onliner.by_files/22885153"></a><i class="va"></i></span>
+                            </div>
+                        </td>
+                        <td class="txt">
+                            <div class="txt-i">
+                	            <div class="ba-label ba-label-2"></div>
+                                <table style="table-layout:fixed; width:100%; overflow: hidden"><tbody><tr><td style="padding:0; border-width:0">
+                                <h2 class="wraptxt"><a href="https://baraholka.onliner.by/viewtopic.php?t=22885153">Продам ноутбук MSI GT70</a></h2>
+                                                                <p class="ba-description">Продам ноутбук MSI GT70</p>
+                                                                </td></tr></tbody></table>
+
+
+                                <p class="ba-signature">
+                                                                            <strong>Минск</strong>
+                                                                                                            <a class="gray" href="https://profile.onliner.by/user/480981">Space_666</a>                                                                    </p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td>
+            <td class="cost">
+                            <div class="price-primary">999,00 р.</div>
+                <small class="cost-torg">
+                                            торг
+                                    </small>
+                        </td>
+            <td class="lst post-tls">
+                <div class="ba-topic-last-post-data" style="display:none">
+                    Space_666<br>17 минут назад                </div>
+                <p class="ba-post-coms">
+                &nbsp;                </p>
+                                 			<p class="ba-post-edit">создано<br>
+                				17 минут назад                			</p>
+                            </td>
+        </tr>

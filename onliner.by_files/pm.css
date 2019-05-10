@@ -1,0 +1,365 @@
+/* -------------------------------------------------- *
+ * Onliner PM
+ * -------------------------------------------------- *
+ * Author: Morozov Igor
+ * URL: http://www.morozoff.info/
+ * Copyright: 2010 Morozov Igor
+** -------------------------------------------------- */
+
+.pmcol-grid {
+
+	}
+	.pmcol-grid:after {
+		content:".";display:block;font-size:1px;height:0;clear:both;visibility:hidden;
+		}
+	.pm-col-1 {
+		float:left; width:14%;
+		}
+	.pm-col-2 {
+		float:left; width:86%;
+		}
+		.pm-col-2-i {
+			border:1px solid #e6e6e6; padding:18px 19px 0; margin-left:4px;
+			min-height:150px;
+			}
+
+/* -- pm nav --*/
+.b-vnav {
+	font:1.3em Arial,Helvetica;
+	}
+	.b-vnav .active {
+		position:relative; font-weight:bold; border:1px solid #e6e6e6; border-right-width:0; background:#fff url(../img/pmnav-bg.png) repeat-y 0 0; padding:7px 9px 7px 8px; margin:7px -5px 7px 0;
+		}
+		.b-vnav .active strong {
+			position:relative; display:block; margin:-7px -10px -7px -8px; padding:7px 9px 7px 8px; background:#fff url(../img/pmnav-bg.png) repeat-y 0 0;
+			}
+	.b-vnav li {
+		padding:6px 9px;
+		}
+	.b-vnav sup {
+		position:relative; top:-5px; color:#666; font:9px Tahoma,Verdana; vertical-align:baseline; //font-size:10px;
+		}
+	.b-vnav .vnav__setup {
+		margin-top:14px;
+		}
+		.vnav__setup a {
+			color:#a73300;
+			}
+			.vnav__setup a:hover {
+				color:#cb0000;
+				}
+	.b-vnav .vnav__create {
+		margin-top:0 !important;
+		}
+	.vnav__create__link {
+		color:#46a009; font-weight:bold;
+		}
+		a.vnav__create__link:hover {
+			color:#46a009;
+			}
+/* -- / pm nav --*/
+
+/* -- pmsettings --*/
+.b-pmsettings {
+	position:relative; padding:0 7px 17px 44px; border-bottom:1px solid #e6e6e6;
+	}
+	.b-pmsettings:after {
+		content:".";display:block;font-size:1px;height:0;clear:both;visibility:hidden;
+		}
+	.b-pmfilter {
+		float:left; color:#b2b2b2; white-space:nowrap; padding-top:1px;
+		}
+		.b-pmfilter a,
+		.b-pmfilter span {
+			color:#808080; text-decoration:none; border-bottom:1px dotted; margin-left: 0.7em;
+			cursor:pointer;
+			}
+	.b-pmsettings .f-cb {
+		margin-top:1px; margin-left:4px;
+		}
+	.b-pmchk {
+		float:right; color:#4c4c4c; font:1.3em Arial,Helvetica; white-space:nowrap;
+		}
+		.pmchk__del {
+			color:#c00 !important;
+			}
+			a.pmchk__del:hover,
+			span.pmchk__del:hover {
+				color:#cb0000 !important;
+				}
+		.b-pmchk a,
+		.b-pmchk span {
+			text-decoration:none; border-bottom:1px dotted;
+			}
+		.b-pmchk span {
+			color: #004D99;
+			cursor: pointer;
+		}
+		.b-pmchk span:hover {
+			color: #06c;
+		}
+/* -- / pmsettings --*/
+
+.h-list-pmmsg {
+
+	}
+	.lpm-author {
+		float:left; width:15%; margin-left:3%; margin-right:1%; padding-top:1px;
+		}
+		.lpm-author a {
+			color:#808080;
+			}
+
+        .lpm-subj {
+		float:left; width:55%; font:1.3em Arial,Helvetica;
+		}
+	.lpm-subj a {
+		font-weight: bold;
+	}
+	.lpm-time {
+		float:right; width:20%; color:#808080; text-align:right; padding-top:1px; padding-right:10px;
+		}
+	.h-list-pmmsg .b-list-topics .f-cb {
+		margin-top:11px; margin-left:16px;
+		}
+	.h-list-pmmsg .b-list-topics li:last-child {
+		border-bottom-width:0;
+		}
+
+.h-pmtopic {
+	position:relative; margin:0 -19px;
+	}
+
+/* -- pm stat --*/
+.b-pmstat {
+	color:#808080; text-align:center; padding:40px 0 20px 4px;
+	}
+	.b-pmstat dt {
+		display:inline; font-weight:bold;
+		}
+	.b-pmstat dd {
+		display:inline; padding-left:27px;
+		}
+	.b-pmstat small {
+		color:#6094c9; font-size:.9em; margin-left:2px;
+		}
+	.pmstat__prc {
+		display:-moz-inline-stack; display:inline-block; height:7px; background-color:#94b7dd; font-size:1px; vertical-align:top; margin:4px 0 0 10px;
+		}
+/* -- / pm stat --*/
+
+/* -- create msg --*/
+.b-pm-createmsg {
+
+	}
+	.b-pm-createmsg .ips {
+		padding-left:8.2em; padding-bottom:15px;
+		}
+		.b-pm-createmsg .ips:after {
+			content:".";display:block;font-size:1px;height:0;clear:both;visibility:hidden;
+			}
+	.b-pm-createmsg .lbl {
+		position:relative; float:left; color:#4c4c4c; font:1.3em Arial,Helvetica; left:-7.769em; width:7em; margin-right:-7.769em; text-align:right; padding-top:6px;
+		}
+	.b-pm-createmsg .ip-area {
+		float:right; width:100%;
+        position: relative;
+		}
+	.b-pm-createmsg .ip__input {
+		font:1.5em Arial,Helvetica; padding:3px 2px 3px 10px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border:1px solid #ccc; width:80%;
+		}
+	.b-pm-createmsg .b-fpm-area {
+		padding-top:0;
+		}
+	.pm-msg-ips .lbl {
+		padding-top:39px;
+		}
+	.pm-msg-ips .fpm-area-text {
+		margin-bottom:10px;
+		}
+	.b-pm-createmsg .b-fpm-btn {
+		padding:4px 0; margin-left:-19px; margin-right:-19px;
+		}
+	.pm__cancel {
+		position:relative; float:right; color:#cb0000; font:1.3em Arial,Helvetica; margin-right:19px; margin-top:7px;
+		}
+		a.pm__cancel:hover {
+			color:#f00;
+			}
+		.pm__cancel .b-ico {
+			left:-15px; top:4px; width:8px; height:8px; background-position:-47px -50px;
+			}
+/* -- / create msg --*/
+
+/* -- read msg --*/
+
+.b-pmmsg-read {
+	position:relative; margin-top:-8px;
+	}
+	.b-pmmsg-read .i-fav {
+		margin-left:0; margin-top:-1px;
+		}
+	.pmmsg-date {
+		float:right; color:#999; font-size:1.1em; margin-top:2px;
+		}
+	.pmmsg__subj {
+		overflow:hidden; font:bold 1.5em Arial,Helvetica; margin-left:30px; padding-bottom:12px;
+		}
+	.b-pmmsg-read .b-messages-thread {
+		}
+		.b-pmmsg-read .b-messages-thread:after {
+			content:".";display:block;font-size:1px;height:0;clear:both;visibility:hidden;
+			}
+		.b-pmmsg-read .b-txt {
+			padding-top:17px; padding-bottom:15px;
+			}
+/* -- / read msg --*/
+
+/* -- tls pm --*/
+.pmmsg-tls {
+	position:relative; font:1.3em Arial,Helvetica; background:#f2f6f8 url(../img/bgs.png) no-repeat -11400px 0; margin:0 -19px; padding:10px 19px;
+	}
+	.pmmsg-tls:after {
+		content:".";display:block;font-size:1px;height:0;clear:both;visibility:hidden;
+		}
+	.pmmsg-tls li {
+		position:relative; float:left; margin-right:23px;
+		}
+	.pmmsg-tls .fl-r {
+		float:right; margin-left:23px; margin-right:0;
+		}
+		.pmmsg-tls .pm__cancel {
+			float:none; margin:0; padding:0; font-size:1em;
+			}
+	.pmmsg-tls .pm__complaint {
+		color:#999; font:.846em Verdana,Tahoma;
+		}
+		.pmmsg-tls a.pm__complaint:hover {
+			color:#808080;
+			}
+	.pm_reply .b-ico {
+		left:0; top:1px; width:13px; height:12px; background-position:-31px -84px;
+		}
+	.pmmsg-tls li {
+	   cursor: pointer; color: #004D99;
+	   }
+	.pmmsg-tls li:hover {
+	   text-decoration: underline; color: #06C;
+	   }
+	li.pm_reply {
+	   padding-left:20px;
+	   }
+	li.pm_delete {
+	   padding-left:15px;
+	   position:relative;
+	   }
+        li.pm_delete a { color: #cb0000; }
+        li.pm_delete a:hover { color: #f00; }
+    li.pm_delete .b-ico {
+       left:0; top:4px; width:8px; height:8px; background-position:-47px -50px;
+       }
+	.pm__frwd .b-ico {
+		left:2px; top:3px; width:11px; height:9px; background-position:-44px -85px;
+		}
+/* -- / tls pm --*/
+
+.pmmsg__empty {
+	color:#b2b2b2; font-size:2.4em; padding:35px 0 62px 44px;
+	}
+
+    /* -- ii@ for smilies and ban --*/
+.hide { display:none }
+.hide-edit { display:none }
+.div-smiley { position:relative; width: 0px; margin-left: 236px; margin-top: 0px; }
+.span-smiley { position: absolute; width: 250px; height: auto; padding: 10px 0 6px 10px; background: #eee; border: solid 1px #ccc; border-top: 0; z-index: 9999; }
+.span-smiley-edit { position: absolute; width: 250px; height: auto; padding: 10px 0 6px 10px; background: #eee; border: solid 1px #ccc; border-top: 0; z-index: 9999; }
+
+.messageFolder {
+	position: absolute;
+	width: 16px;
+	height: 15px;
+	left: 15px;
+	top: 10px;
+	font-size: 1px;
+	background: url(/static/img/envelope.png) no-repeat 0 0;
+}
+
+.messageFolder-outbox {
+	background-position: 0 0;
+}
+
+.messageFolder-sentbox {
+    background-position: -17px 0;
+}
+
+#pmNotice {
+	z-index: 9999;
+	position: fixed;
+	bottom: 15px;
+	right: 15px;
+	padding: 0.7em 1.5em;
+	color: #fff;
+	font-size: 150%;
+	background: #000;
+	opacity: 0.7;
+}
+
+.pagination {
+	position:relative;
+	border-top:1px solid #e5e5e5;
+	background:#edf4f8 url(../img/bgs.png) no-repeat -1900px 100%;
+    border-bottom:1px solid #e5e5e5;
+	margin:-1px -19px 0;
+	padding:0 19px;
+}
+
+
+.pm_preview {
+	font-size: 120%;
+	margin-left: 1.5em;
+	color: #004D99;
+	cursor: pointer;
+}
+
+.pm_preview:hover {
+    color: #06c;
+    text-decoration: underline;
+}
+
+.pm_cancel {
+    font-size: 120%;
+    margin-left: 1.5em;
+    color: #777;
+    cursor: pointer;
+}
+
+.pm_cancel:hover {
+    color: #999;
+    text-decoration: underline;
+}
+
+.bbcode-colorpicker,
+.bbcode-sizepicker {
+    position: absolute;
+    z-index: 9999;
+    border: 1px solid #aaa;
+    font-size:110%;
+}
+
+.bbcode-colorpicker div {
+	display:block;
+	cursor: pointer;
+	width: 20px;
+	height: 20px;
+}
+
+.bbcode-sizepicker div {
+	padding: 0.3em;
+	cursor: pointer;
+	background: #fff;
+	white-space: nowrap;
+}
+
+.bbcode-sizepicker div:hover {
+	background: #ddd;
+}

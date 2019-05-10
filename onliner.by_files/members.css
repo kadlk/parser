@@ -1,0 +1,88 @@
+.b-userlist {
+	padding-bottom:25px;
+	}
+	.b-userlist table {
+		width:100%;
+		}
+	.b-userlist th {
+		font-size:1.1em; background:#d0dae2 url(../img/bgs.png) no-repeat -7200px 0; padding:11px 10px 10px 0;
+		}
+		.b-userlist th a {
+			text-decoration:none;
+			}
+	.b-userlist td {
+		color:#999; font-size:1.1em; line-height:1.273em; padding:14px 10px 14px 0;
+		}
+	.b-userlist .i-tlks {
+		position:static; display:-moz-inline-stack; display:inline-block; width:16px; height:15px; background-position:-16px 0;
+		}
+	.b-userlist .a-c {
+		text-align:center;
+		}
+	.b-userlist .a-r {
+		text-align:right;
+		}
+	.b-userlist .rate-stat {
+		white-space:nowrap; width:1%; padding-left:10px;
+		}
+    .b-userlist .reg-key {
+        white-space:nowrap; width:1%;
+        }
+	.b-userlist .rate-up {
+		color:#090; background:url(../img/ar-t.gif) no-repeat 0 4px; padding-left:10px;
+		}
+	.b-userlist .rate-dwn {
+		color:#f00; background:url(../img/ar-b.gif) no-repeat 0 4px; padding-left:10px;
+		}
+	.b-userlist .ph {
+		width:1%;
+		}
+	.b-userlist .user {
+		color:#4c4c4c;
+		}
+	.b-userlist .user big {
+		font:bold 1.182em/1.077em Arial,Helvetica;
+		}
+	.b-userlist .c-twn {
+		color:#b2b2b2;
+		}
+	.c-gr {
+		color:#390;
+		}
+	.b-userlist .c-rd {
+		color:#f00;
+		}
+	.b-userlist .carma {
+		color:#ff5400; font:1.8em Arial,Helvetica; text-align:center;
+		}
+	.b-userlist .u-rate {
+		color:#000; font:1.8em Arial,Helvetica; text-align:center;
+		}
+		.b-userlist .u-rate span {
+			padding:1px 9px 2px;
+			}
+	.b-userlist .u-card {
+		display:-moz-inline-stack; display:inline-block; width:12px; height:15px; vertical-align:top;
+		}
+		.b-userlist span.u-card {
+			visibility:hidden;
+			}
+	.b-userlist .u-card-1 {
+		background-color:#000;
+		}
+	.b-userlist .u-card-2 {
+		background-color:#f00;
+		}
+	.b-userlist .u-card-3 {
+		background-color:#fc0;
+		}
+	.b-userlist .u-msgs {
+		color:#4c4c4c; font:1.8em Arial,Helvetica; text-align:right;
+		}
+	.b-userlist .all-msg {
+		width:1%;
+		}
+		
+.i-total-posts {
+    width:16px; height:15px; background-position:-16px 0; margin-top:-25px; right:35px
+}

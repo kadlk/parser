@@ -1,0 +1,294 @@
+/* -------------------------------------------------- *
+ * Onliner profile
+ * -------------------------------------------------- *
+ * Author: Morozov Igor
+ * URL: http://www.morozoff.info/
+ * Copyright: 2010 Morozov Igor
+** -------------------------------------------------- */
+
+.profile-page {
+	position:relative; margin-top:-10px;
+	}
+	.profile-page:after {
+		content:".";display:block;font-size:1px;height:0;clear:both;visibility:hidden;
+		}
+
+.l-profp-col-1 {
+	position:relative; z-index:2; float:left; width:12.5em; margin-right:-14em; text-align:center;
+	}
+.l-profp-col-2 {
+	float:left; width:69%;
+	}
+	.profp-col-2-i {
+		padding:0 0 0 14em;
+		}
+.l-profp-col-3 {
+	float:right; width:25%;
+	}
+	.profp-col-3-i {
+		position:relative; margin-left:-35px;
+		}
+
+/* -- profile ava --*/
+
+.profp-ava {
+	position:relative; width:125px; height:125px; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; margin:4px auto 18px;
+	}
+	.profp-locked {
+		position:absolute; left:0; top:0; width:100%; height:35px; color:#fff; font:bold 15px/35px Arial,Helvetica; text-align:center; background-color:#cc0000; background-color:rgba(204,0,0,0.8); border-top-right-radius:5px; border-top-left-radius:5px; -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; -webkit-border-top-left-radius: 5px; -webkit-border-top-right-radius: 5px;
+		}
+/* -- / profile ava --*/
+
+.profp-status {
+	color:#808080; font:bold 1.3em Arial,Helvetica; text-align:center; padding-bottom:12px;
+	}
+
+.profp__h3-small {
+	color:#9a9a9a; font-size:0.9em; font-weight:normal; text-align:center; padding-bottom:6px;
+	}
+
+/* -- profile carma --*/
+.profp-carma {
+	position:relative; margin:-2px -7px 0; padding-bottom:9px;
+	}
+	.profp-carma big {
+		font:3.6em/1em Arial,Helvetica;
+		}
+	.profp-carma__votedwn {
+		display:-moz-inline-stack; display:inline-block; width:13px; height:20px; background:url(../img/b-ico.png) no-repeat -14px -138px; vertical-align:top; margin-right:2px; margin-top:11px;
+		}
+	.profp-carma__voteup {
+		display:-moz-inline-stack; display:inline-block; width:13px; height:20px; background:url(../img/b-ico.png) no-repeat 0 -138px; vertical-align:top; margin-left:2px; margin-top:11px;
+		}
+/* -- / profile carma --*/
+
+.profp-rate {
+	color:#303030; font:2.4em/1em Arial,Helvetica; padding-bottom:15px;
+	}
+	.profp-rate span {
+		display:-moz-inline-stack; display:inline-block; padding:3px 10px 0;
+		}
+
+/* -- profile lock card --*/
+.profp-lockcard {
+	display:-moz-inline-stack; display:inline-block; font-size:1px;
+	}
+	.profp-lockcard li {
+		float:left; padding:0 2px 0 3px;
+		}
+	.profp-lockcard .plc {
+		display:block; width:12px; height:15px; vertical-align:top;
+		}
+	.profp-lockcard .lockcard-1 {
+		background-color:#000;
+		}
+	.profp-lockcard .lockcard-2 {
+		background-color:#f00;
+		}
+	.profp-lockcard .lockcard-3 {
+		background-color:#fc0;
+		}
+/* -- / profile lock card --*/
+
+/* -- info profile --*/
+.uprofile-info {
+	font:1.3em/1.538em Arial,Helvetica; padding-left:10.769em; padding-bottom:16px;
+	}
+	.uprofile__small {
+		color:#808080; font:0.846em Verdana,Tahoma,Geneva;
+		}
+	.uprofile-info dt {
+		position:relative; float:left; color:#808080; width:9.615em; left:-10.769em; margin-right:-10.769em; text-align:right;
+		}
+	.uprofile-info dd {
+		padding-bottom:4px;
+		}
+	.uprofile-info .uprofile__dd__bigp {
+		padding-bottom:20px;
+		}
+/* -- / info profile --*/
+
+.profp-sbtn {
+	padding-bottom:27px;
+	}
+
+.profp-myfriend {
+	display:-moz-inline-stack; display:inline-block; color:#09f; font:1.8em Arial,Helvetica; background-color:#eef7ff; padding:16px 28px; -webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	border-radius: 5px; vertical-align:middle; margin-right:27px;
+	}
+.profp-cancel {
+	color:#f00; text-decoration:none; border-bottom:1px dotted;
+	}
+	a.profp-cancel:hover {
+		color:#c00;
+		}
+
+/* -- profile nav --*/
+.profpnav {
+	font:1.3em Arial,Helvetica; padding:0 0 20px 30px;
+	}
+	.profpnav li {
+		padding-bottom:9px;
+		}
+	.profpnav sup {
+		position:relative; top:-4px; color:#f00; vertical-align:baseline; font-size:9px; //font-size:10px;
+		}
+	.profpnav__a__sendpm, a.profpnav__a__sendpm:hover {
+		color:#46a009; 
+		}
+		.profpnav__a__sendpm .b-ico {position:absolute; margin-left:-20px; margin-top:5px; background:url(../img/b-ico.png) -28px -99px; width:10px; height:7px;}
+	.profpnav__a__thanks, a.profpnav__a__thanks:hover {
+		color:#d46300; 
+		}
+		.profpnav__a__thanks .b-ico {position:absolute; margin-left:-20px; margin-top:2px; background:url(../img/b-ico.png) -17px -96px; width:10px; height:10px;}
+	.profpnav-thanks__small {
+		display:block; font:9px Verdana,Tahoma,Geneva; padding-top:2px;
+		}
+		.profpnav-thanks__small__a, a.profpnav-thanks__small__a:hover {
+			color:#9a9a9a; text-decoration:none; border-bottom:1px dotted;
+			}
+	.profpnav__li__complaint {
+		padding-top:2px; font:10px Verdana,Tahoma,Geneva;
+		}
+	.profpnav__a__complaint, a.profpnav__a__complaint:hover {
+		color:#c09d66;
+		}
+	.profpnav .i-smallfav {
+		margin-left:-23px; width:15px; height:14px; background-position:0 -159px;
+		}
+	.profpnav .i-file {
+		margin-left:-20px; margin-top:2px; width:13px; height:10px; background-position:0 -84px;
+		}
+	.profpnav__li_thankssmall {
+		font:9px Verdana,Tahoma,Geneva; padding-top:16px;
+		}
+		.profpnav__li_thankssmall .b-ico {
+			margin-top:1px;
+			}
+/* -- / profile nav --*/
+
+/* -- profile stat --*/
+.profp-stat {
+	border-top:1px solid #e6e6e6; font:1.3em Arial,Helvetica; padding:17px 0 0 30px;
+	}
+	.profp-stat h3 {
+		color:#999; padding-bottom:9px;
+		}
+	.profp-stat li {
+		padding-bottom:9px;
+		}
+	.profp-stat-latesttime {
+		color:#818181; font:.769em/1.5em Verdana,Tahoma,Geneva; padding-top:15px;
+		}
+/* -- / profile stat --*/
+
+.profp-wlc, a.profp-wlc:hover {
+	display:block; color:#fff; font:18px/45px Arial,Helvetica; text-decoration:none; text-transform:uppercase; text-shadow:0 1px 0 #c30; background-color:#ff6200; -webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	border-radius: 5px;
+	}
+	.profp-wlc span {
+		display:block; height:47px; background:url(../img/btn-dnc.png) repeat-x 0 0; -webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		-ms-border-radius: 5px;
+		border-radius: 5px;
+		padding:5px 0 0 30px; border-bottom:1px solid #d63c00; 
+		}
+
+.profp-unav {
+	font:1.3em Arial,Helvetica; background-color:#fff8dc; padding:14px 20px 13px 30px; margin-bottom:18px;
+	}
+	.profp-unav li {
+		padding:4px 0 5px;
+		}
+	.profp-unav a {
+		color:#a73300;
+		}
+	.profp-unav a:hover {
+		color:#cb0000;
+		}
+
+.b-userlist {
+	padding-bottom:25px;
+	}
+	.b-userlist table {
+		width:100%;
+		}
+	.b-userlist th {
+		font-size:1.1em; background:#d0dae2 url(../img/bgs.png) no-repeat -7200px 0; padding:11px 10px 10px 0;
+		}
+		.b-userlist th a {
+			text-decoration:none;
+			}
+	.b-userlist td {
+		color:#999; font-size:1.1em; line-height:1.273em; padding:14px 10px 14px 0;
+		}
+	.b-userlist .i-tlks {
+		position:static; display:-moz-inline-stack; display:inline-block; width:16px; height:15px; background-position:-16px 0;
+		}
+	.b-userlist .a-c {
+		text-align:center;
+		}
+	.b-userlist .a-r {
+		text-align:right;
+		}
+	.b-userlist .rate-stat {
+		white-space:nowrap; width:1%; padding-left:10px;
+		}
+	.b-userlist .rate-up {
+		color:#090; background:url(../img/ar-t.gif) no-repeat 0 4px; padding-left:10px;
+		}
+	.b-userlist .rate-dwn {
+		color:#f00; background:url(../img/ar-b.gif) no-repeat 0 4px; padding-left:10px;
+		}
+	.b-userlist .ph {
+		width:1%;
+		}
+	.b-userlist .user {
+		color:#4c4c4c;
+		}
+	.b-userlist .user big {
+		font:bold 1.182em/1.077em Arial,Helvetica;
+		}
+	.b-userlist .c-twn {
+		color:#b2b2b2;
+		}
+	.b-userlist .c-gr {
+		color:#390;
+		}
+	.b-userlist .c-rd {
+		color:#f00;
+		}
+	.b-userlist .carma {
+		color:#ff5400; font:1.8em Arial,Helvetica; text-align:center;
+		}
+	.b-userlist .u-rate {
+		color:#000; font:1.8em Arial,Helvetica; text-align:center;
+		}
+		.b-userlist .u-rate span {
+			padding:1px 9px 2px;
+			}
+	.b-userlist .u-card {
+		display:-moz-inline-stack; display:inline-block; width:12px; height:15px; vertical-align:top;
+		}
+		.b-userlist span.u-card {
+			visibility:hidden;
+			}
+	.b-userlist .u-card-1 {
+		background-color:#000;
+		}
+	.b-userlist .u-card-2 {
+		background-color:#f00;
+		}
+	.b-userlist .u-card-3 {
+		background-color:#fc0;
+		}
+	.b-userlist .u-msgs {
+		color:#4c4c4c; font:1.8em Arial,Helvetica; text-align:right;
+		}
+	.b-userlist .all-msg {
+		width:1%;
+		}
