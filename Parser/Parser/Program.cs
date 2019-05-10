@@ -14,13 +14,10 @@ namespace Parser
     {
         static void Main(string[] args)
         {
-
             string response = File.ReadAllText(@"D:\Programming\Homework\Parser\onliner.by.HTML");
 
-            //string response = Onliner.GetPage("https://baraholka.onliner.by/viewforum.php?f=63&sk=created");
-            string parsing = Onliner.ParseTover(response);
-            //Console.WriteLine(parsing);
-            //Console.Read();
+            //string response = Parser.GetPage("https://baraholka.onliner.by/viewforum.php?f=63&sk=created");
+            List<Item> items = Parser.ParsePage(response);
         }
 
 

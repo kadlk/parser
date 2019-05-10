@@ -11,10 +11,16 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            string temp2 = "252,23 р.";
+            string temp3 = "создано\n                \t\t\t\t1 час назад                \t\t\t";
+            string temp2 = "Привет ывфы фыфф";
             string temp = "\n                        ";
-            string resultString = Regex.Match(temp, @"\d+").Value;
-            Console.WriteLine(resultString);
+            //string resultString = Regex.Match(temp, @"\d+").Value;
+            //string output = Regex.Replace(temp3, @"\s", "");
+            //string newStrstr = Regex.Replace(temp3, @"(?<![A-Za-z])'|'(?![A-Za-z])|[^A-Za-z0-9']", "");
+            string newStrstr = Regex.Replace(temp3, @" {2,}", "");
+            string newStrstr2 = Regex.Replace(newStrstr, "\\\n{2,}", "");
+
+            Console.WriteLine(newStrstr);
             Console.Read();
         }
     }
